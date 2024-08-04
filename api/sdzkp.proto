@@ -1,0 +1,58 @@
+syntax = "proto3";
+package sdzkp;
+
+
+
+service SDZKP {
+    rpc Setup(SGDInstance) returns (SetupAck){}
+    rpc Commit(Commitments) returns (Challenge){}
+    rpc Verify(Response) returns (VerificationResult) {}
+}
+
+
+message SGDInstance{
+    string sgdid = 1; // problem instance identifier
+    repeated int64 g = 2 [packed=true]; //permutation represented in arrayform in Sn (outside H)
+    uint64 n = 3; // Sn
+    uint64 m = 4; // number of generators
+    repeated int64 generators = 5 [packed=true]; //generators of the subgroup H in Sn
+    uint64 min_distance = 6; // minimum distance of an element in H to pi
+    uint64 number_of_rounds = 7; // number of rounds in ZKP
+}
+
+message SetupAck{
+    string sgdid = 1; // problem instance identifier
+    bool setupresult = 2; // whether the sgd instance is accepted or not as the ZKP instance
+}
+
+message Commitments{
+    string sgdid = 1; // problem instance identifier
+    uint64 roundid = 2; // ZKP round identifier
+    bytes C1 = 3; // base64 encoded digest values
+    bytes C2 = 4;
+    bytes C3 = 5;
+}
+
+message Challenge{
+    string sgdid = 1; // problem instance identifier
+    uint64 roundid = 2; // ZKP round identifier
+    int64 challenge = 3;
+}
+
+message Response{
+    string sgdid = 1; // problem instance identifier
+    uint64 roundid = 2; // ZKP round identifier
+    repeated int64  Z1 = 3 [packed=true];
+    repeated int64  Z2 = 4 [packed=true];
+    int64 s = 5;
+    repeated int64 t_r = 6 [packed=true];
+    repeated int64 t_u = 7 [packed=true];
+}
+
+message VerificationResult{
+    string sgdid = 1; // problem instance identifier
+    uint64 roundid = 2; // ZKP round identifier
+    bool roundresult = 3; //Result of an individual round 
+    bool verificationresult = 4; // Result of the ZKP all rounds
+
+}
