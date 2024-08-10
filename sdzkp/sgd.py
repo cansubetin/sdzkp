@@ -1,5 +1,5 @@
 import random, itertools, sys
-from lib.elementaryabeliansubgroup import ElementaryAbelianSubgroupWithSolution, ElementaryAbelianSubgroup
+from sdzkp.elementaryabeliansubgroup import ElementaryAbelianSubgroupWithSolution, ElementaryAbelianSubgroup
 import hashlib
 import base64
 

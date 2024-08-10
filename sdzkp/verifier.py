@@ -1,5 +1,5 @@
-from sdzkproto import sdzkp_pb2
-from lib.sgd import SubgroupDistanceProblem, SubgroupDistanceRound
+from sdzkp.sdzkproto import sdzkp_pb2
+from sdzkp.sgd import SubgroupDistanceProblem, SubgroupDistanceRound
 import random
 
 class Verifier:

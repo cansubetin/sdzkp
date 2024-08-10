@@ -1,6 +1,6 @@
-from lib.max2sat import Max2SAT
-from lib.sgd import SubgroupDistanceProblemWithSolution, SubgroupDistanceRound
-from sdzkproto import sdzkp_pb2
+from sdzkp.max2sat import Max2SAT
+from sdzkp.sgd import SubgroupDistanceProblemWithSolution, SubgroupDistanceRound
+from sdzkp.sdzkproto import sdzkp_pb2
 
 
 class Prover:

@@ -4,9 +4,12 @@ from concurrent import futures
 import logging
 
 import grpc
-from sdzkproto import sdzkp_pb2
-from sdzkproto import sdzkp_pb2_grpc
-from lib.verifer import Verifier
+
+
+from sdzkp.sdzkproto import sdzkp_pb2
+from sdzkp.sdzkproto import sdzkp_pb2_grpc
+from sdzkp.verifier import Verifier
+
 
 class SDZKP(sdzkp_pb2_grpc.SDZKPServicer):
 

@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from sdzkproto import sdzkp_pb2 as sdzkproto_dot_sdzkp__pb2
+from sdzkp.sdzkproto import sdzkp_pb2 as sdzkp_dot_sdzkproto_dot_sdzkp__pb2
 
 GRPC_GENERATED_VERSION = '1.64.1'
 GRPC_VERSION = grpc.__version__
@@ -20,7 +20,7 @@ except ImportError:
 if _version_not_supported:
     warnings.warn(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in sdzkproto/sdzkp_pb2_grpc.py depends on'
+        + f' but the generated code in sdzkp/sdzkproto/sdzkp_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
@@ -41,18 +41,18 @@ class SDZKPStub(object):
         """
         self.Setup = channel.unary_unary(
                 '/sdzkp.SDZKP/Setup',
-                request_serializer=sdzkproto_dot_sdzkp__pb2.SGDInstance.SerializeToString,
-                response_deserializer=sdzkproto_dot_sdzkp__pb2.SetupAck.FromString,
+                request_serializer=sdzkp_dot_sdzkproto_dot_sdzkp__pb2.SGDInstance.SerializeToString,
+                response_deserializer=sdzkp_dot_sdzkproto_dot_sdzkp__pb2.SetupAck.FromString,
                 _registered_method=True)
         self.Commit = channel.unary_unary(
                 '/sdzkp.SDZKP/Commit',
-                request_serializer=sdzkproto_dot_sdzkp__pb2.Commitments.SerializeToString,
-                response_deserializer=sdzkproto_dot_sdzkp__pb2.Challenge.FromString,
+                request_serializer=sdzkp_dot_sdzkproto_dot_sdzkp__pb2.Commitments.SerializeToString,
+                response_deserializer=sdzkp_dot_sdzkproto_dot_sdzkp__pb2.Challenge.FromString,
                 _registered_method=True)
         self.Verify = channel.unary_unary(
                 '/sdzkp.SDZKP/Verify',
-                request_serializer=sdzkproto_dot_sdzkp__pb2.Response.SerializeToString,
-                response_deserializer=sdzkproto_dot_sdzkp__pb2.VerificationResult.FromString,
+                request_serializer=sdzkp_dot_sdzkproto_dot_sdzkp__pb2.Response.SerializeToString,
+                response_deserializer=sdzkp_dot_sdzkproto_dot_sdzkp__pb2.VerificationResult.FromString,
                 _registered_method=True)
 
 
@@ -82,18 +82,18 @@ def add_SDZKPServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Setup': grpc.unary_unary_rpc_method_handler(
                     servicer.Setup,
-                    request_deserializer=sdzkproto_dot_sdzkp__pb2.SGDInstance.FromString,
-                    response_serializer=sdzkproto_dot_sdzkp__pb2.SetupAck.SerializeToString,
+                    request_deserializer=sdzkp_dot_sdzkproto_dot_sdzkp__pb2.SGDInstance.FromString,
+                    response_serializer=sdzkp_dot_sdzkproto_dot_sdzkp__pb2.SetupAck.SerializeToString,
             ),
             'Commit': grpc.unary_unary_rpc_method_handler(
                     servicer.Commit,
-                    request_deserializer=sdzkproto_dot_sdzkp__pb2.Commitments.FromString,
-                    response_serializer=sdzkproto_dot_sdzkp__pb2.Challenge.SerializeToString,
+                    request_deserializer=sdzkp_dot_sdzkproto_dot_sdzkp__pb2.Commitments.FromString,
+                    response_serializer=sdzkp_dot_sdzkproto_dot_sdzkp__pb2.Challenge.SerializeToString,
             ),
             'Verify': grpc.unary_unary_rpc_method_handler(
                     servicer.Verify,
-                    request_deserializer=sdzkproto_dot_sdzkp__pb2.Response.FromString,
-                    response_serializer=sdzkproto_dot_sdzkp__pb2.VerificationResult.SerializeToString,
+                    request_deserializer=sdzkp_dot_sdzkproto_dot_sdzkp__pb2.Response.FromString,
+                    response_serializer=sdzkp_dot_sdzkproto_dot_sdzkp__pb2.VerificationResult.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -121,8 +121,8 @@ class SDZKP(object):
             request,
             target,
             '/sdzkp.SDZKP/Setup',
-            sdzkproto_dot_sdzkp__pb2.SGDInstance.SerializeToString,
-            sdzkproto_dot_sdzkp__pb2.SetupAck.FromString,
+            sdzkp_dot_sdzkproto_dot_sdzkp__pb2.SGDInstance.SerializeToString,
+            sdzkp_dot_sdzkproto_dot_sdzkp__pb2.SetupAck.FromString,
             options,
             channel_credentials,
             insecure,
@@ -148,8 +148,8 @@ class SDZKP(object):
             request,
             target,
             '/sdzkp.SDZKP/Commit',
-            sdzkproto_dot_sdzkp__pb2.Commitments.SerializeToString,
-            sdzkproto_dot_sdzkp__pb2.Challenge.FromString,
+            sdzkp_dot_sdzkproto_dot_sdzkp__pb2.Commitments.SerializeToString,
+            sdzkp_dot_sdzkproto_dot_sdzkp__pb2.Challenge.FromString,
             options,
             channel_credentials,
             insecure,
@@ -175,8 +175,8 @@ class SDZKP(object):
             request,
             target,
             '/sdzkp.SDZKP/Verify',
-            sdzkproto_dot_sdzkp__pb2.Response.SerializeToString,
-            sdzkproto_dot_sdzkp__pb2.VerificationResult.FromString,
+            sdzkp_dot_sdzkproto_dot_sdzkp__pb2.Response.SerializeToString,
+            sdzkp_dot_sdzkproto_dot_sdzkp__pb2.VerificationResult.FromString,
             options,
             channel_credentials,
             insecure,

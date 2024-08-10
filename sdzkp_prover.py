@@ -18,10 +18,14 @@ from __future__ import print_function
 import logging
 
 import grpc
-from sdzkproto import sdzkp_pb2
-from sdzkproto import sdzkp_pb2_grpc
-from lib.prover import Prover
+from sdzkp.sdzkproto import sdzkp_pb2
+from sdzkp.sdzkproto import sdzkp_pb2_grpc
+from sdzkp.prover import Prover
 import uuid
+
+
+import os, sys; sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+
 
 def run():
     
