@@ -1,4 +1,5 @@
-"""The Python implementation of the SDZKP."""
+
+"""A simple Python code to showcase verifier."""
 
 from concurrent import futures
 import logging
