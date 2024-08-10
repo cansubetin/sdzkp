@@ -53,10 +53,8 @@ class ElementaryAbelianSubgroup:
         temp = math.ceil(len(bit_array)/2)
         for i in range(temp):
             if bit_array[2*i] == 1:
-                #print("using ", 2*i)
                 combined_permutation = self.multiply_permutations(combined_permutation, self.generators[(i,"t")])
             if bit_array[2*i+1] == 1:
-                #print("using ", 2*i+1)
                 combined_permutation = self.multiply_permutations(combined_permutation, self.generators[(i,"f")])
         return combined_permutation, bit_array
 
@@ -129,15 +127,9 @@ class ElementaryAbelianSubgroupWithSolution(ElementaryAbelianSubgroup):
         super().__init__(n, generators)
         self.solution_t_h = solution_t_h # Store generators that produce the solution
         self.h, bit_array = self.multiply_solution_generators() # This is the solution (h in PermutationGroup H) of the subgroup distance problem
-        #print("CHECKKKKKKKK  ", self.solution_t_h, self.h)
+
 
     def multiply_solution_generators(self):
-        # combined_permutation = self.identity[:]
-        # for i in range(round(self.m/2)):
-        #     if self.solution_t_h[i] == 1:
-        #         combined_permutation = self.multiply_permutations(combined_permutation, self.generators[(i,"t")])
-        #     else:
-        #         combined_permutation = self.multiply_permutations(combined_permutation, self.generators[(i,"f")])
         combined_permutation, bit_array = self.generate_element_from_bitarray(self.solution_t_h)
         return combined_permutation, bit_array
     

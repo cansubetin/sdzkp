@@ -40,8 +40,6 @@ class SubgroupDistanceRound:
         self.C3 = self.generate_commitment(self.s)
 
     def generate_random_array(self,n):
-        print(f"Seed {self.s}")
-        #systemrandom = SystemRandom()
         random.seed(self.s)
         self.R = [0]*n
         for i in range(n):
@@ -68,7 +66,6 @@ class SubgroupDistanceProblem:
         for i in range(round(m/2)):
             generators[(i,"t")]=linearized_generators[(2*i)*n:(2*i)*n+n]
             generators[(i,"f")]=linearized_generators[(2*i+1)*n:(2*i+1)*n+n]
-        print("KKKKKKK = ", min_dist)
         return cls(generators, m, n, g, min_dist)
 
     def print_generators_arrayform(self):
@@ -110,10 +107,7 @@ class SubgroupDistanceProblemWithSolution(SubgroupDistanceProblem):
         self.h = None # This is the solution for subgroup distance problem (multiplication of solution generators)
         self.max2sat_instance_solution = max2sat_instance.solution
         self.solution_t_h = self.convert_max2sat_solution_to_subgroupdistance_solution(max2sat_instance.solution)  # The solution to both max2sat (and indirectly to the extended subgroup distance problem)
-        print("t_h =", self.solution_t_h)
-        print("max2sat solution", max2sat_instance.solution)
         self.K = 6*self.q_original - 4*self.K_prime # The minimum Hamming distance of H to pi
-        #print("FROMMAXSAT K=", self.K)
         self.reduce_to_sdp_and_extend() # Reduce max2sat to subgroup distance problem and extend
         self.num_transpositions_in_generators = len(self.generators[0,"t"])
         self.n = 2*self.num_transpositions_in_generators
@@ -121,39 +115,28 @@ class SubgroupDistanceProblemWithSolution(SubgroupDistanceProblem):
         
         self.convert_generators_to_arrayform_using_blinder()
         self.g = self.generate_permutation_g_in_Sn()
-        #print("g", self.g[-(self.q-self.q_original)*6:])
-
+        
         self.H_WithSolution = ElementaryAbelianSubgroupWithSolution(self.n, self.generators_arrayform, self.solution_t_h)
         self.h = self.H_WithSolution.h
-        #print("h", self.h[-(self.q-self.q_original)*6:])
         check_K = self.hamming_distance(self.g, self.h)
         if check_K != self.K:
             print(f"There is some error in extension since {self.K}!={check_K}")
         super().__init__(self.generators_arrayform, self.m, self.n, self.g, self.K)
     
     def setup_sdzkp_round(self, round_id):
-        rd = SubgroupDistanceRound()
-                                             
+        rd = SubgroupDistanceRound()                                             
         rd.t_r = self.H_WithSolution.random_binary_array()
         rd.r, rd.t_r = self.H_WithSolution.generate_element_from_bitarray(rd.t_r)
-        print(len(self.g), len(rd.r))
         rd.t_u = [a ^ b for a, b in zip(self.H_WithSolution.solution_t_h, rd.t_r)]
         rd.U, rd.t_u = self.H_WithSolution.generate_element_from_bitarray(rd.t_u)
         rd.G = self.H_WithSolution.multiply_permutations(rd.r,self.g)
         rd.generate_random_array(self.n)
         distn = self.H_WithSolution.hamming_distance(self.g, self.h)
-        print(f"Distance {distn}")
         rd.generate_Z1_and_Z2()
         rd.generate_commitments()
 
-        print(round_id, self.H_WithSolution.solution_t_h, rd.t_r, rd.t_u)
         self.round_data[round_id] = rd
         return rd
-        
-    # def instance(self):
-    #     # n, generators of H, pi, K
-    #     flat_generator_array = [item for sublist in self.generators for item in sublist]
-    #     return self.n, flat_generator_array, self.permutation_pi, self.K
 
     def convert_max2sat_solution_to_subgroupdistance_solution(self, solution):
         solution_t_h = [0]*2*self.p
@@ -358,15 +341,12 @@ class SubgroupDistanceProblemWithSolution(SubgroupDistanceProblem):
             all_combinations = combinations # Prune the search space
        
         # Compute the XOR for each combination
-        #xor_results = []
         for combination in all_combinations:
             xor_result = 0
             for num in combination:
                 xor_result ^= bit_array[num]
             if value == xor_result:
-                #print(combination, value, xor_result)
                 correct_combinations.append(combination)
-            #xor_results.append((combination, xor_result))
         
         return correct_combinations
 
@@ -374,16 +354,13 @@ class SubgroupDistanceProblemWithSolution(SubgroupDistanceProblem):
     def test_membership(self, perm):
         v = perm[0]
         bit_array = self.get_bit_i_of_generators(0)
-        #print(bit_array)
         correct_combinations = self.xor_and_check_combinations(bit_array, v, combinations=None)
         for i in range(1, len(perm)):
             v = perm[i]
             bit_array = self.get_bit_i_of_generators(i)
-            #print(bit_array)
             correct_combinations = self.xor_and_check_combinations(bit_array, v, combinations=correct_combinations)
             if len(correct_combinations)<=0:
                 return False
-        print(correct_combinations)
         if len(correct_combinations)>0:
             return True
         else:

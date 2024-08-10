@@ -97,15 +97,11 @@ class Max2SAT:
         new_clauses = set()
         for clause in self.clauses:
             new_clause = []
-            #print("Clause ", clause)
             for var, neg in clause:
-                #print("Var Neg ", var, neg)
                 if self.solution[var] == False:
                     new_clause.append((var, not neg))
-                    #new_clause.append((var, True))
                 else:
                     new_clause.append((var, neg))
-                    #new_clause.append((var, True))
             new_clauses.add(tuple(new_clause))
         self.clauses = new_clauses
     
@@ -121,14 +117,12 @@ class Max2SAT:
         l2 = (1, False)
         clause = tuple([l1, l2])
         self.clauses.append(clause)
-        #self.print_clause(clause)
 
         # NOTx1 V x3
         l1 = (0, True)
         l2 = (2, False)
         clause = tuple([l1, l2])
         self.clauses.append(clause)
-        #self.print_clause(clause)
 
 
         # x2 V NOTx3
@@ -136,7 +130,6 @@ class Max2SAT:
         l2 = (2, True)
         clause = tuple([l1, l2])
         self.clauses.append(clause)
-        #self.print_clause(clause)
 
 
         # NOTx2 V NOTx1
@@ -144,7 +137,6 @@ class Max2SAT:
         l2 = (0, True)
         clause = tuple([l1, l2])
         self.clauses.append(clause)
-        #self.print_clause(clause)
 
         self.solution = [False, True, True]
 
@@ -194,7 +186,6 @@ class Max2SAT:
                 parts = line.split()
                 var1 = int(parts[1])
                 var2 = int(parts[2])
-                #print(var1, var2)
                 clauses.append((var1, var2))
         
        
@@ -218,7 +209,6 @@ class Max2SAT:
                 file.write(f"{solution}\n")
                 file.write("Number of satisfied clauses:\n")
                 file.write(f"{num_satisfied_clauses}\n")
-            #print(f"Solution successfully written to {filepath}")
         except Exception as e:
             print(f"An error occurred while writing to the file: {e}")
 
@@ -287,45 +277,10 @@ class Max2SAT:
                 #    self.clauses.add(clause)
                 return clause
 
-    def generate_instance_with_min_k_satisfied(self, k):
-        assignment = [random.choice([True, False]) for _ in range(self.num_variables)]
-        self.clauses = set()
-        #self.solution = assignment
-        # Ensure every variable appears in at least one clause
-        check = [False for _ in range(self.num_variables)]
-        for var in range(1, self.num_variables + 1):
-            if check[var-1]==False:
-                var1 = var
-                var2 = random.randint(1, self.num_variables)
-                
-                while var1 == var2:
-                    var2 = random.randint(1, self.num_variables)
-                is_negated1 = random.choice([True, False])
-                is_negated2 = random.choice([True, False])
-                clause = tuple(sorted([(var1, is_negated1), (var2, is_negated2)]))
-                if k<=0:
-                    clause = self.generate_unsatisfiable_specific_clause(var1, var2, assignment)
-                if self.is_clause_satisfied(clause, assignment):
-                    k = k - 1
-                self.clauses.add(clause)
-                self.print_clause(clause)
-                check[var1-1] = True
-                check[var2-1] = True
-        print (k, len(self.clauses))
-        
-        # Generate remaining random clauses
-        while len(self.clauses) < self.num_clauses:
-            clause = self.generate_satisfiable_clause(assignment)
-            self.clauses.add(clause)
-            self.print_clause(clause)
-        self.solution = assignment
-        return assignment
-
     def is_clause_satisfied(self, clause, assignment):
         lit1, lit2 = clause
         var1, is_negated1 = lit1
         var2, is_negated2 = lit2
-        #print(var1, var2)
         val1 = not assignment[var1 ] if is_negated1 else assignment[var1 ]
         val2 = not assignment[var2 ] if is_negated2 else assignment[var2 ]
         return val1 or val2
@@ -356,9 +311,7 @@ class Max2SAT:
     
     def solve(self):
         assignment = [random.choice([True, False]) for _ in range(self.num_variables)]
-        #print(len(assignment))
         for var in range(0, self.num_variables):
-            #print(var)
             true_assignment = assignment.copy()
             true_assignment[var ] = True
             false_assignment = assignment.copy()
@@ -371,7 +324,6 @@ class Max2SAT:
                 assignment[var ] = True
             else:
                 assignment[var ] = False
-        #print("Solution Found ", assignment)
         self.k = self.check_instance(assignment)
         self.solution = assignment
         return assignment, self.k
@@ -392,8 +344,6 @@ class Max2SAT:
             if satisfied_count == max_satisfied:
                 best_assignment.append(assignment)
 
-        #print(f"Best Assignment: {best_assignment}, Maximum Satisfied Clauses: {max_satisfied}")
-        #self.solution = best_assignment
         print("Check if solution in best assignments ", tuple(self.solution) in best_assignment)
         for t in best_assignment:
             print(f"tuple: {t}, k: {max_satisfied}, check {self.check_instance(t)}")

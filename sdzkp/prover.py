@@ -11,27 +11,21 @@ class Prover:
         max2satinstance = Max2SAT(num_variables=num_variables)
         max2satinstance.generate_instance_motoki() #.create_default() # 
         self.SGD = SubgroupDistanceProblemWithSolution(max2satinstance)
-        print(self.SGD.solution_t_h)
+
 
     def setup(self):
-        print(type(self.instance_id))
         linearized_generators = self.SGD.linearize_generators()
-        print("KKKKKK, ", self.SGD.K)
         sgdinstance = sdzkp_pb2.SGDInstance(sgdid = self.instance_id, g=self.SGD.g, n=self.SGD.n, m=self.SGD.H.m, generators=linearized_generators, min_distance=self.SGD.K, number_of_rounds=self.number_of_rounds)
         setupackmessage:sdzkp_pb2.SetupAck = self.grpc_stub.Setup(sgdinstance)
         # TODO: Check if problemid is the same!
-        print(f"The problem {setupackmessage.sgdid}  accepted by  verifier? {setupackmessage.setupresult}")
         return setupackmessage.setupresult
 
 
     def commit(self, round_id):
-        rd:SubgroupDistanceRound = self.SGD.setup_sdzkp_round(round_id)
-        
+        rd:SubgroupDistanceRound = self.SGD.setup_sdzkp_round(round_id)        
         commitmsg = sdzkp_pb2.Commitments(sgdid=self.instance_id,roundid=round_id,C1=rd.C1, C2=rd.C2, C3=rd.C3)
         challengemessage:sdzkp_pb2.Challenge = self.grpc_stub.Commit(commitmsg)
         # TODO: Check if problemid, roundid are the same, respectively!
-
-        print(f"Received challenge: {challengemessage.challenge}")
         return challengemessage.challenge
     
     def response(self, round_id, c):

@@ -18,9 +18,7 @@ class Verifier:
         rd.C1 = commitments.C1
         rd.C2 = commitments.C2
         rd.C3 = commitments.C3
-        self.SGD.round_data[commitments.roundid] = rd
-        #print(self.instance_id, self.SGD.round_data[commitments.roundid].C1),
-        
+        self.SGD.round_data[commitments.roundid] = rd        
         c = random.randint(0,2)
         rd.c = c
         return sdzkp_pb2.Challenge(sgdid=commitments.sgdid, roundid = commitments.roundid, challenge=c)
@@ -34,26 +32,26 @@ class Verifier:
         
         rd.U, rd.t_u = self.SGD.H.generate_element_from_bitarray(t_u)
         Z1_minus_R = [a - b for a, b in zip(Z1, rd.R)]
-        #print(Z1_minus_R[-20:], rd.U[-20:])
         if Z1_minus_R != rd.U:
-            print("Z1_minus_R =? U FAILED")
+            #print("Z1_minus_R =? U FAILED")
             retval = False
         else:
-            print("Z1_minus_R =? U SUCCEEDED")
+            #print("Z1_minus_R =? U SUCCEEDED")
             
             expected_C1 = rd.generate_commitment(Z1)
             if rd.C1 != expected_C1:
-                print("C1 =? Hash(Z1) FAILED")
+                #print("C1 =? Hash(Z1) FAILED")
                 retval = False 
             else:
-                print("C1 =? Hash(Z1) SUCCEEDED")
+                #print("C1 =? Hash(Z1) SUCCEEDED")
 
                 expected_C3 = rd.generate_commitment(s)
                 if expected_C3 != rd.C3:
-                    print("C3 =? Hash(s) FAILED")
+                    #print("C3 =? Hash(s) FAILED")
                     retval = False 
                 else:
-                    print("C3 =? Hash(s) SUCCEEDED")
+                    #print("C3 =? Hash(s) SUCCEEDED")
+                    pass
                     
         return retval
 
@@ -68,24 +66,25 @@ class Verifier:
 
         Z2_minus_R = [a - b for a, b in zip(Z2, rd.R)]
         if Z2_minus_R != rd.G:
-            print("Z2_minus_R =? r FAILED")
+            #print("Z2_minus_R =? r FAILED")
             retval = False
         else:
-            print("Z2_minus_R =? r SUCCEEDED")
+            #print("Z2_minus_R =? r SUCCEEDED")
 
             expected_C2 = rd.generate_commitment(Z2)
             if rd.C2 != expected_C2:
-                print("C2 =? Hash(Z2) FAILED")
+                #print("C2 =? Hash(Z2) FAILED")
                 retval = False 
             else:
-                print("C2 =? Hash(Z2) SUCCEEDED")
+                #print("C2 =? Hash(Z2) SUCCEEDED")
 
                 expected_C3 = rd.generate_commitment(s)
                 if expected_C3 != rd.C3:
-                    print("C3 =? Hash(s) FAILED")
+                    #print("C3 =? Hash(s) FAILED")
                     retval = False 
                 else:
-                    print("C3 =? Hash(s) SUCCEEDED")
+                    #print("C3 =? Hash(s) SUCCEEDED")
+                    pass
 
         return retval
 
@@ -98,25 +97,24 @@ class Verifier:
         #print(Z1_minus_Z2[-30:])
         nonzero_count = sum(1 for x in Z1_minus_Z2 if x != 0)
         if nonzero_count > self.SGD.K :
-            print("|Z1_minus_Z2<>0| <=? K FAILED", nonzero_count,self.SGD.K )
+            #print("|Z1_minus_Z2<>0| <=? K FAILED", nonzero_count,self.SGD.K )
             retval = False 
         else:
-            print("|Z1_minus_Z2<>0| <=? K SUCCEEDED",nonzero_count,self.SGD.K )
-
-
+            #print("|Z1_minus_Z2<>0| <=? K SUCCEEDED",nonzero_count,self.SGD.K )
             expected_C1 = rd.generate_commitment(Z1)
             if rd.C1 != expected_C1:
-                print("C1 =? Hash(Z1) FAILED")
+                #print("C1 =? Hash(Z1) FAILED")
                 retval = False 
             else:
-                print("C1 =? Hash(Z1) SUCCEEDED")
+                #print("C1 =? Hash(Z1) SUCCEEDED")
 
                 expected_C2 = rd.generate_commitment(Z2)
                 if rd.C2 != expected_C2:
-                    print("C2 =? Hash(Z2) FAILED")
+                    #print("C2 =? Hash(Z2) FAILED")
                     retval = False 
                 else:
-                    print("C2 =? Hash(Z2) SUCCEEDED")
+                    #print("C2 =? Hash(Z2) SUCCEEDED")
+                    pass
 
         return retval
 
