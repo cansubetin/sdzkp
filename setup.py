@@ -1,17 +1,17 @@
 from setuptools import setup, find_packages
-
+from distutils.util import convert_path
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-
-with open("VERSION.md", "r", encoding="utf-8") as version_file:
-    sdzkpversion = version_file.read()
+main_ns = {}
+ver_path = convert_path("sdzkp/_version.py")
+with open(ver_path) as ver_file:
+    exec(ver_file.read(), main_ns)
 
 setup(
-  # TODO: Fix the configs in this part
   name='SDZKP',
-  version=sdzkpversion,
+  version=main_ns['__version__'],
   description="SDZKP: A zero-knowledge proof using subgroup distance problem",
   long_description=long_description,
   long_description_content_type="text/markdown",
