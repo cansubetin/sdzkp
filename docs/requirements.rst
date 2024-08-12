@@ -1,7 +1,10 @@
-In this document, we present the abstract model of zero-knowledge proof
+==================
+SDZKP Requirements 
+==================
+
+In this section, we present the abstract model of zero-knowledge proof
 (ZKP) schemes, the security requirements, design choices, performance
-metrics, adversary model and threat analysis that will be used to
-evaluate the ZKP proposal that we develop in this project.
+metrics, adversary model and threat analysis.
 
 Abstract Model
 ==============
@@ -43,9 +46,9 @@ Zero knowledge proof schemes are seen in two types. A proof to assure
 that a statement is true or a proof of knowledge of an hidden
 information. The principals in a ZKP scheme are the prover (Alice or
 :math:`P`) and the verifier (Bob or :math:`V`) as shown in
-Figure `1 <#fig:zkparch>`__ that depicts the overall architecture of a
+:numref:`fig-zkparch` that depicts the overall architecture of a
 ZKP scheme. In an abstract ZKP scheme as shown in
-Figure `1 <#fig:zkparch>`__, the prover generates a proof of the
+:numref:`fig-zkparch` , the prover generates a proof of the
 statement and send it to the verifier. This step is called as the commit
 (:math:`a`, witness) phase. Subsequently, the verifier challenges the
 prover by posing some questions such as sending a binary sequence back
@@ -55,31 +58,28 @@ the verifier (response, :math:`z` phase). Finally the verifier accepts
 or rejects the claim without being able to reveal any confidential
 information.
 
-A :math:`\Sigma`-protocol shown in Figure `1 <#fig:zkparch>`__ is a
+A :math:`\Sigma`-protocol shown in :numref:`fig-zkparch` is a
 three move (commit :math:`a`, challenge :math:`c`, response :math:`z`)
 special honest verifier zero knowledge proof protocol which has special
-soundness [@damgaard2002sigma]. Security requirements completeness,
-soundness and zero-knowledge properties are given in Section
-`2 <#sec:securityreq>`__ with their variants. A :math:`\Sigma`-protocol
+soundness :cite:p:`damgaard2002sigma`. Security requirements completeness,
+soundness and zero-knowledge properties are given in Section :ref:`requirements:Security Requirements` with their variants. A :math:`\Sigma`-protocol
 can be converted to a non-interactive mode by employing the Fiat-Shamir
-transformation [@fiat1986prove]. To employ this transformation, the
+transformation :cite:p:`fiat1986prove`. To employ this transformation, the
 prover runs the first step and produces the commitment :math:`a`. Then,
 instead of expecting a challenge from the verifier, the prover computes
 a (random) challenge by using a random oracle that accepts :math:`a` and
 the statement circuit (:math:`x`) as input. Using this challenge, the
 prover produces the response in step 3.
 
-.. figure:: figures/zkparch.png
-   name: fig:zkparch
-   :alt: The general architecture of a ZKP protocol. This scheme is
-   called as the :math:`\Sigma`-protocol in
-   literature [@damgaard2002sigma].
+.. _fig-zkparch:
 
-   The general architecture of a ZKP protocol. This scheme is called as
-   the :math:`\Sigma`-protocol in literature [@damgaard2002sigma].
+.. figure:: figures/zkparch.png
+   :alt: The general architecture of a ZKP protocol.
+
+   The general architecture of a ZKP protocol. This scheme is called as the :math:`\Sigma`-protocol in literature :cite:p:`damgaard2002sigma`.
 
 Let us give a mathematical example initially presented by Tompa and
-Woll[@tompa1987zero; @tompa1987random]. The set of integers between
+Woll :cite:p:`tompa1987zero` :cite:p:`tompa1987random`. The set of integers between
 :math:`1` and :math:`n` that are relatively prime with :math:`n` is
 denoted by :math:`Z_n^*.` A number :math:`a \in  Z_n^*` is said to be a
 quadratic residue mod :math:`n` if there exits :math:`x \in  Z_n^*` such
@@ -442,7 +442,7 @@ are satisfied. However, when zero-knowledge proofs are employed in
 applications such as identification or authentication, additional
 attacks can be implemented by an adversary. Below we briefly define the
 attack vectors and the associated adversary models are presented in
-Table `1 <#tab:adversary>`__ [@major2020authentication; @walshe2019non;
+:numref:`tab-attacks` [@major2020authentication; @walshe2019non;
 @grassi2021poseidon; @pathak2021secure; @Dwork2004; @UMAR2021102374].
 
 1. Impersonation attacks (masquerading as prover)
@@ -471,20 +471,18 @@ Table `1 <#tab:adversary>`__ [@major2020authentication; @walshe2019non;
 7. Redundancy information attack (a passive adversary listens to all
    messages on the channel and tries to derive useful information)
 
-8. Timing attack (a passive adversary has access to system clocks and
-   can measure how much time it takes for algorithms to run.)
-   [@Dwork2004]
+8. Timing attack (a passive adversary has access to system clocks and can measure how much time it takes for algorithms to run.) [@Dwork2004]
 
-.. container::
-   :name: tab:adversary
 
-   .. table:: Potential attacks and the adversary model.
+.. _tab-attacks:
+
+.. table:: Potential attacks and the adversary model.
 
       +-----------+-----------+----------+--------+-----------+-----------+
-      | *         | **        | **Lo     | **P    | **Re      | **A       |
-      | *Attack** | Goal(s)** | cation** | assive | sources** | ccessible |
-      |           |           |          | Ac     |           | data**    |
-      |           |           |          | tive** |           |           |
+      | Attack    |  Goal(s)  | Location | **P/A**| Resources | **A       |
+      |           |           |          |        |           | ccessible |
+      |           |           |          |        |           | data**    |
+      |           |           |          |        |           |           |
       +===========+===========+==========+========+===========+===========+
       | Im        | Break     | Insider  | Active | Bounded   | Some      |
       | personate | s         | outsider |        |           | :mat      |
@@ -566,5 +564,4 @@ practitioners can make informed decisions about the most suitable ZKP
 schemes for their specific applications, ensuring both efficiency and
 security in cryptographic implementations.
 
-.. [1]
-   S. Goldwasser, …. \``The knowledge …’’
+.. bibliography::
