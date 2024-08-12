@@ -17,7 +17,7 @@ def run():
         ('grpc.max_receive_message_length', MAX_MESSAGE_LENGTH),
     ], compression=grpc.Compression.Gzip) as channel:
         stub = sdzkp_pb2_grpc.SDZKPStub(channel)
-        alice = Prover(stub, uuid.uuid4(), 5, 64)
+        alice = Prover(stub, uuid.uuid4(), 5, 16)
         alice.run()
 
 

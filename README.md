@@ -8,12 +8,6 @@ In 0KNOW, we have studied  NP group-theoretic problems and selected the search v
 All in all, we present a new zero-knowledge identification scheme rooted in the complexity of the subgroup distance problem within the Hamming metric. SDZKP incorporates a cryptographically secure pseudorandom number generator to obscure secrets and employs a Stern-type algorithm to ensure strong security features. 
 
 
-
-
-
-
-
-
 ## Articles
 
 - Cansu Betin Onur, ``Intractable Group-theoretic Problems Around Zero-knowledge Proofs,'' [arXiv:2206.13350 [cs.CR]](https://arxiv.org/abs/2206.13350)
