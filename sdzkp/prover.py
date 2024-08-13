@@ -1,7 +1,8 @@
 from sdzkp.max2sat import Max2SAT
 from sdzkp.sgd import SubgroupDistanceProblemWithSolution, SubgroupDistanceRound
 from sdzkp.sdzkproto import sdzkp_pb2
-
+from sdzkp.elementaryabeliansubgroup import ElementaryAbelianSubgroupWithSolution
+import random
 
 class Prover:
     """
@@ -135,3 +136,48 @@ class Prover:
         if self.setup():
             for i in range(self.number_of_rounds):
                 self.run_round(i)
+
+
+class HonestProver(Prover):
+    """
+    The HonestProver class is responsible for setting up and executing rounds of a Zero-Knowledge Proof (ZKP) protocol 
+    for the Subgroup Distance Problem (SGD) derived from a Max2SAT instance. This is just inheriting Prover for convenience.
+
+    Attributes:
+        grpc_stub: The gRPC stub for communication.
+        instance_id (str): A unique identifier for the problem instance.
+        number_of_rounds (int): The number of ZKP rounds to execute.
+        SGD (SubgroupDistanceProblemWithSolution): An instance of the Subgroup Distance Problem with a solution.
+    """
+    pass
+
+class DishonestProver (Prover):
+    """
+    The DishonestProver class is responsible for setting up and executing rounds of a Zero-Knowledge Proof (ZKP) protocol 
+    for the Subgroup Distance Problem (SGD) derived from a Max2SAT instance. After initialization, the DishonestProver randomly 
+    choses a solution to the problem and tries to cheat the honest verifier.
+
+    Attributes:
+        grpc_stub: The gRPC stub for communication.
+        instance_id (str): A unique identifier for the problem instance.
+        number_of_rounds (int): The number of ZKP rounds to execute.
+        SGD (SubgroupDistanceProblemWithSolution): An instance of the Subgroup Distance Problem with a solution.
+    """
+
+    def __init__(self, grpc_stub, instance_id, number_of_rounds, num_variables):
+        """
+        Initializes the DishonestProver with a Max2SAT instance and converts it to a Subgroup Distance Problem.
+        After initialization, the DishonestProver randomly choses a solution to the problem and tries to cheat the honest verifier.
+
+        Parameters:
+            grpc_stub: The gRPC stub for communication.
+            instance_id (str): A unique identifier for the problem instance.
+            number_of_rounds (int): The number of ZKP rounds to execute.
+            num_variables (int): The number of variables in the Max2SAT instance.
+        """
+        super().__init__(grpc_stub, instance_id, number_of_rounds, num_variables)
+        self.SGD.max2sat_instance.solution = [random.choice([True, False]) for _ in range(num_variables)]
+        self.SGD.max2sat_instance_solution = self.SGD.max2sat_instance.solution
+        self.SGD.solution_t_h = self.SGD.convert_max2sat_solution_to_subgroupdistance_solution(self.SGD.max2sat_instance.solution)
+        self.SGD.H_WithSolution = ElementaryAbelianSubgroupWithSolution(self.SGD.n, self.SGD.generators_arrayform, self.SGD.solution_t_h)
+        self.SGD.h = self.SGD.H_WithSolution.h

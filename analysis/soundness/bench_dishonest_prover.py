@@ -1,5 +1,5 @@
 
-"""A simple Python code to showcase prover."""
+"""A simple Python code to showcase dishonest prover and the soundness of SDZKP."""
 from __future__ import print_function
 
 import logging
@@ -16,7 +16,7 @@ def run():
         ('grpc.max_receive_message_length', MAX_MESSAGE_LENGTH),
     ], compression=grpc.Compression.Gzip) as channel:
         stub = sdzkp_pb2_grpc.SDZKPStub(channel)
-        alice = Prover(stub, uuid.uuid4(), 5, 16)
+        alice = DishonestProver(stub, uuid.uuid4(), 5, 16)
         alice.run()
 
 

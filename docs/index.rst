@@ -13,6 +13,7 @@ SDZKP Documentation
 
    sdzkp
    requirements
+   analysis
    code
 
 Indices and tables

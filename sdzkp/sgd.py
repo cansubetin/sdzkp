@@ -225,6 +225,7 @@ class SubgroupDistanceProblemWithSolution(SubgroupDistanceProblem):
         Parameters:
             max2sat_instance: An instance of the max2sat problem.
         """
+        self.max2sat_instance = max2sat_instance
         self.p = max2sat_instance.num_variables
         self.m = self.p * 2
         self.q_original = max2sat_instance.num_clauses
