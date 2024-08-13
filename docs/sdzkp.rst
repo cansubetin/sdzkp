@@ -1,9 +1,5 @@
+SDZKP: A zero-knowledge proof using subgroup distance problem
 =============================================================
-SDZKP: A Zero-Knowledge Proof Using Subgroup Distance Problem
-=============================================================
-
-Introduction
-============
 
 Zero-knowledge proof (ZKP) systems help principals to verify the
 veracity of a piece of information without sharing the data. They are
@@ -34,7 +30,7 @@ number generator to obscure secrets and employs a Stern-type algorithm
 to ensure strong security features.
 
 Articles
-========
+--------
 
 -  Cansu Betin Onur, \``Intractable Group-theoretic Problems Around
    Zero-knowledge Proofs,’’ `arXiv:2206.13350
@@ -44,7 +40,7 @@ Articles
    [cs.CR] <https://arxiv.org/abs/2408.00395>`__
 
 Acknowledgement
-===============
+---------------
 
 This work is partially supported by the NLnet foundation under the MoU
 number 2021-12-510.
@@ -68,6 +64,9 @@ SDZKP is an interactive zero-knowledge protocols and we use gRPC.
 
 ``pip install protobuf``
 
+You can easily install the required packages by
+``pip install -r requirements.txt``.
+
 SDZKP package
 -------------
 
@@ -79,3 +78,23 @@ You can then copy sdzkp_verifier.py and sdzkp_prover.py from
 `GitHub <https://github.com/cansubetin/sdzkp>`__ and run them in two
 terminals (do not forget to ``source venv/bin/activate`` in both
 terminals).
+
+Installation (from source)
+==========================
+
+To install sdzkp from source, checkout the latest version from
+`GitHub <https://github.com/cansubetin/sdzkp>`__ by
+
+::
+
+   git clone https://github.com/cansubetin/sdzkp
+   cd sdzkp
+   pip install -e .
+
+If you change the gRPC proto definitions, ``sdzkp/api/sdzkp.proto`` then
+under root project folder, run
+
+::
+
+   pip install grpcio-tools
+   ./compile_api.sh
