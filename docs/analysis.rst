@@ -2,6 +2,9 @@
 Performance Analysis
 ====================
 
+We provide detailed performance and security analysis in this section. All the tests presented in the 
+sequel are run on an iMac with 3,2 GHz 8-Core Intel Xeon W with 32 GB 2666 MHz DDR4 RAM. The results are the 
+averages of 100 runs.
 
 Setup Related Tasks
 ===================
@@ -139,3 +142,46 @@ As expected, a larger number of rounds in a run requires a larger amount of time
 
    The execution times with 95% confidence for soundness validation.
 
+Prover Related Tasks
+====================
+
+In SDZKP, the main computational load on the prover is the commitment generation. The response generation is O(1) since the computation effort for response 
+generation is mainly handled during commitment generation. That is why, we present the commitment generation execution times here. :numref:`fig-prover_commitment_with_ci`  shows 
+execution times for commitment generation by the prover as the number of generators in the SGD problem changes. The commitment generation algorithm linearly 
+depends on the number of generators, therefore the execution time is a linear function of the number of generators. For an acceptable security level,
+for instance 128 bits of entropy, the commitment generation takes around 1 second.
+
+
+.. _fig-prover_commitment_with_ci:
+
+.. figure:: figures/prover_commitment_with_ci.png
+   :alt:  The execution times with 95% confidence for commitment generation by the prover.
+
+   The execution times with 95% confidence for commitment generation by the prover.
+
+
+ 
+
+
+Verifier Related Tasks
+======================
+
+:numref:`fig-verifier_verification_with_ci` presents a line plot showing the relationship between the number of generators and the verification 
+time by the verifier, including a 95% confidence interval. The x-axis represents the number of generators, 
+ranging from around 10 to 120, while the y-axis measures the execution time in seconds, with values ranging 
+from 0.00 to approximately 0.35 seconds. The plot reveals that the verification time remains relatively low 
+and stable as the number of generators increases from 10 to around 90. The confidence intervals are visible as error bars, 
+indicating greater variability in the verification time. In this experiment, we randomly select a challenge value from the 
+set  {0,1,2}. All the cases, contain code for honest prover; that is, the verification process has to provide True for all challenges.
+The spikes may be the result of discrepencies in random challenge selection process. All in all, the verification process takes almost a third 
+of the commiment generation time. We can conclude that verifier's computation load is considerably lower than that of the prover. 
+
+.. _fig-verifier_verification_with_ci:
+
+.. figure:: figures/verifier_verification_with_ci.png
+   :alt:  The execution times with 95% confidence for commitment generation by the prover.
+
+   The execution times with 95% confidence for commitment generation by the prover.
+
+
+ 
