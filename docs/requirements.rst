@@ -135,63 +135,69 @@ The zero-knowledge property is shown by using a probabilistic polynomial-time al
 called simulator. It ensures that the verifier gains no additional information by giving  
 outputs indistinguishable from the verifier’s without having a witness. The idea of the simulation paradigm :cite:p:`oded2001foundations` is 
 “whatever a party can do by itself cannot be considered a gain from interaction with the outside."
+Let us explain zero knowledge property more formally. 
 
 
-Formally, let :math:`(P,V)` be an interactive proof system and :math:`x`
-be an input. All messages between :math:`P` and :math:`V` during the
-execution of the protocol on :math:`x` is called the view of :math:`V`
-on :math:`x` and denoted by :math:`View_V[ P(x) \leftrightarrow V(x)].`
-A proof system :math:`(P,V)` is said to be zero knowledge proof if, for
+An IP :math:`(P,V)` is considered to have zero knowledge property if for
 every efficient (PPT) verifier :math:`V^*`, there exists an efficient
 simulator :math:`S_{V^*}` such that for every true statement :math:`x,`
-:math:`View_{V^*}[ P(x) \leftrightarrow V^*(x)]=S_{V^*}(x).` In this
-definition, verifier may not follow the specified protocol and he can
-cheat. If we restrict ourselves to honest verifier, than the protocol is
-called **honest verifier zero knowledge proof**.
+:math:`View_{V^*}[ P(x) \leftrightarrow V^*(x)]=S_{V^*}(x)` where :math:`View_{V^*}[ P(x) \leftrightarrow V(x)]` and :math:`S_{V^*}(x)` denote all messages
+between :math:`P` and :math:`V^*` that appears in the real execution of the protocol
+(which is called the view of :math:`V^*` on x) and output of :math:`S_{V^*}` respectively.  
+In the given scenario, the verifier might not adhere to the specified protocol and could 
+attempt to cheat. If we limit the scenario to an honest verifier, the protocol is 
+referred to as an **honest verifier zero-knowledge proof**.
 
-For practical purposes, the definition of zero knowledge is relaxed by
-allowing the simulator to fail. Mainly there are three variants of zero
-knowledge property. **Perfect zero knowledge** means no information is
-leaked. The two distributions are identical as given in the definition.
-**Statistical zero knowledge** means some information is leaked to the
-verifier but it is a negligible amount regardless of the computational
-resources the verifier. The two distributions are not identical but have
-negligible statistical distance Lastly, a zero knowledge is said to be
-**computational** if the amount of information leaked is negligible for
-a probabilistic polynomial-time verifier. That is; a polynomial time
-Turing machine can not distinguish samples from the two distributions.
 
-To sum up, in perfect and statistical (a.k.a., almost-perfect) zero
-knowledge, it is not possible to notice the difference in outputs of the
-verifier and the simulator in information-theoretic sense. On the other
-hand, in computational zero-knowledge although this distinction can be
-done theoretically, it is not possible by any computationally efficient
-procedure. A zero-knowledge protocol without any of these adjectives is
-used for the most general class computational zero-knowledge.
 
-Relaxation can be done also on the soundness condition. Recall that a
-protocol is sound if the statement :math:`x` is false, a cheating prover
-:math:`P^*` can not convince :math:`V`. For a computationally unbounded
-:math:`P^*,` **perfect soundness** is referred to no success of
-:math:`P^*` while **statistical soundness** is referred :math:`P^*` to
-has negligible probability of cheating the verifier. If :math:`P^*` is
-PPT and has negligible probability of success in cheating the verifier
-then the protocol is said to have **computational soundness.**
+In real life, the definition of zero knowledge proof schemes is often relaxed.
+This relaxation can be done in soundness or zero knowledge condition. For both conditions
+these relaxations give rise to three variants of the properties; 
+namely, perfect, statistical and computational.
 
-Zero knowledge systems with computational soundness also called as
-**arguments** by Brassard, Chaum and Crepeau  :cite:p:`brassard1988minimum`. In
-summary, zero-knowledge proofs satisfies the soundness requirements
-under the assumption of computationally unbounded provers whereas the
-zero-knowledge arguments satisfies this requirement under the assumption
-of computationally-bounded provers. Although there is a distinction
-between zero-knowledge proofs and arguments, we use the term proof in
-this project for simplifying the presentation.
+**Perfect soundness** is the original condition that a computationally unbounded cheating prover
+:math:`P^*` can not convince :math:`V`.  
+If this :math:`P^*` has negligible probability of cheating the verifier, the protocol is said to have 
+**statistical soundness**. It is said to have **computational soundness** if the probability of success of 
+cheating prover  :math:`P^*` is negligable whenever :math:`P^*` is probabilistic polynomial time. 
+Zero-knowledge systems with computational soundness are also referred to as arguments, 
+a term introduced by Brassard, Chaum, and Crepeau :cite:p:`brassard1988minimum`.
 
-Special Soundness: A three round (commit, challenge, response) protocol
+
+Relaxation in zero knowledge property is done by allowing the simulator 
+to sometimes fail. If we keep the original condition that the outputs of the actual protocol and the simulator are 
+indistinguishable (i.e., absolutely no information is leaked) then we say 
+the protocol has **perfect zero knowledge**  property. **statistical (a.k.a., almost-perfect) zero knowledge** 
+permits a negligible amount of information to leak, but this leakage is so minor 
+that it remains insignificant,  no matter how much computational power the verifier 
+possesses. Although the two distributions differ, their statistical distance is negligible.  
+If protocol allows for some information leakage, but only to an extent that is negligible for 
+a verifier with limited (probabilistic polynomial-time) computational resources, 
+then it is called **computational zero knowledge **. 
+
+
+Next we give a stronger property then soundness condition:
+
+(Two) Special Soundness: A three round (commit, challenge, response) protocol
 for a relation :math:`R` is said to have special soundness if there
 exists an efficient extractor :math:`A` which computes a :math:`w`
 satisfying :math:`(x,w)\in R` for any :math:`x` and any pair of
 transcripts :math:`(a,c,z),(a,c',z')` with :math:`c\not=c'.`
+
+This definition is generalized as k-Special Soundness (see :cite:p:`attema2021compressed`):
+A three round  public-coin IP for relation :math:`R` with challenge space consisting of :math:`N` elements 
+is said to be :math:`k`-Special Sound (out of :math:`N`) if there exists a PPT algorithm such that on input 
+a statement :math:`x` and :math:`k`-many accepting transcripts :math:`(a,c_1,z_1), \dots, (a,c_k,z_k)`` for the same commitment
+with different challanges, it outputs a witness :math:`w`` satisfying :math:`(x,w) \in R.`
+
+It is known that a :math:`k`-Special Sound IP with challenge space with :math:`N` elements has 
+knowledge soundness with knowledge error :math:`\frac{k-1}{N}.'  :cite:p:`attema2021compressed'
+
+
+
+
+
+
 
 Special honest verifier zero knowledge property: A three round (commit,
 challenge, response) protocol for a relation :math:`R` is said to have
