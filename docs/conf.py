@@ -34,6 +34,7 @@ extensions = [
     "sphinx_rtd_theme",
 ]  
 
+import sphinx_rtd_theme
 
 autosectionlabel_prefix_document = True
 numfig = True
