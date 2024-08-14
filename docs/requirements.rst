@@ -58,6 +58,7 @@ the verifier (response, :math:`z` phase). Finally the verifier accepts
 or rejects the claim without being able to reveal any confidential
 information.
 
+
 A :math:`\Sigma`-protocol shown in :numref:`fig-zkparch` is a
 three move (commit :math:`a`, challenge :math:`c`, response :math:`z`)
 special honest verifier zero knowledge proof protocol which has special
@@ -113,86 +114,28 @@ Security Requirements
 =====================
 
 An interactive proof scheme (IP) is a two-party protocol between a
-prover and a verifier (turing machines) that must meet the conditions of
-completeness and soundness. Completeness property means that if the
-statement is true, the prover can convince the verifier. Soundness
-property means, if the statement is false, a dishonest prover cannot
-mislead the verifier, except with negligable probability. {cite:p}`\`
-
-In a formal interactive proof system, the prover (P) has infinite
+prover and a verifier (turing machines) where the prover (P) has infinite
 computational power, while the verifier (V) operates within polynomial
-time. The system satisfies:
-
-Completeness: The probability that the verifier accepts a true statement
-is high. Soundness: The probability that the verifier accepts a false
-statement is low. These probabilities are determined by the verifier’s
-coin tosses. Repeating the protocol can reduce error probability.
-
-Some IP protocols may require an initial trusted setup phase,
-potentially involving a trusted third party (TTP) or secure
-multi-computing, using a common reference string (CRS) known to both
-parties.
+time. IP should satisfy two conditions, namely completeness and soundness. 
+Completeness property means that if the statement is true, the prover can convince the verifier. 
+Soundness property means, if the statement is false, a dishonest prover cannot
+mislead the verifier, except with negligable probability :cite:p:`goldwasser1989knowledge` . 
+An essential feature of interactive proofs is the randomness employed by the verifier. 
+If verifier sends each random choices (coin tosses) it has done, then IP is called 
+public-coin (or Arthur-Merlin game as introduced by Babai    :cite:p:`babai1985trading`)  Some IP protocols may require an initial trusted setup phase,
+potentially involving a trusted third party (TTP). 
 
 A zero-knowledge proof (ZKP) is an IP where the verifier learns nothing
 beyond the truth of the statement. If the prover convinces the verifier
 with just one message, the proof is non-interactive. Non-interactive
-ZKPs (NIZKP) can be achieved through a CRS or the Fiat–Shamir heuristic.
+ZKPs (NIZKP) can be achieved through a common reference string (CRS) or 
+a random oracle model. A common approach to achive a NIZKP is to convert 
+an interactive protocol into a non-interactive one using the Fiat–Shamir heuristic.
+The zero-knowledge property is shown by using a probabilistic polynomial-time algorithm  
+called simulator. It ensures that the verifier gains no additional information by giving  
+outputs indistinguishable from the verifier’s without having a witness. The idea of the simulation paradigm :cite:p:`oded2001foundations` is 
+“whatever a party can do by itself cannot be considered a gain from interaction with the outside."
 
-The zero-knowledge property is modeled using a simulator, ensuring the
-verifier gains no additional information, making the simulator’s output
-indistinguishable from the verifier’s.
-
-Informally, an interactive proof scheme (IP) is a two party protocol
-between a prover and a verifier such that the requirements
-**completeness** and **soundness** are satisfied. Completeness is
-whenever the statement is TRUE, a prover can convince the verifier.
-Soundness means whenever the statement is FALSE, a dishonest prover
-cannot convince the verifier. More formally, an *interactive proof
-system*  [1]_ for a language :math:`L` over :math:`\{0,1 \}^*` is a
-protocol between an interactive pair of Turing machines :math:`(P,V)`
-where :math:`P ,` called the prover, has infinite power and :math:`V ,`
-called the verifier, has polynomial time computation power. An
-interactive proof system should satisfy the properties:
-
--  Completeness:
-   :math:`Pr[V(x)=Accept \ | \ x\in L ] \geq 1-\frac{1}{n^k}`
-
--  Soundness:
-   :math:`Pr[V(x)=Accept \ | \ x\notin L ] \leq \frac{1}{n^k}`
-
-where the probabilities are taken over fair coin tosses; :math:`n=|x|`
-is the sufficiently large input length and :math:`k` is a positive
-constant. The proof system :math:`(P, V )` is named **public coin**,
-a.k.a **Arthur-Merlin game**, if :math:`V` sends each coin tosses.
-General approach in an IP is reducing the probability error by repeating
-the protocol many times.
-
-Some protocols may require an initial phase called trusted setup. The
-setup phase can be executed by a trusted third party (TTP) or by
-employing a secure multi-computing technique in a distributed fashion.
-Apart from the (instance, witness) pair, some private/common inputs can
-be assigned to the participants of the protocol, e.g., by a trusted
-third party (TTP). A common component known by both parties is generally
-called by common reference string (CRS).
-
-A zero knowledge proof system is an interactive protocol reinforced with
-the **zero knowledge property**; the verifier will not learn anything
-from the proof procedure other than the fact that the statement is true.
-If in a proof system the prover convinces the verifier by sending only a
-single message, then this system is said to be **non-interactive**. By
-its very nature, originally defined ZKP is a highly repetitive
-interactive protocol. On the other hand via a CRS or a random oracle
-model one may achieve (computational) non-interactive zero-knowledge
-(NIZKP). A common method to achive a NIZKP is transform an interactive
-protocol to non-interactive by Fiat–Shamir heuristic.
-
-The zero knowledge property, the verifier will not gain any extra
-information from the interaction, is formulated by means of a simulator
-(a probabilistic polynomial-time algorithm). The simulation paradigm
-[@oded2001foundations] postulates that “whatever a party can do by
-itself cannot be considered a gain from interaction with the outside."
-The simulator’s output and the verifier’s output are expected to be
-indistinguishable.
 
 Formally, let :math:`(P,V)` be an interactive proof system and :math:`x`
 be an input. All messages between :math:`P` and :math:`V` during the
@@ -236,7 +179,7 @@ PPT and has negligible probability of success in cheating the verifier
 then the protocol is said to have **computational soundness.**
 
 Zero knowledge systems with computational soundness also called as
-**arguments** by Brassard, Chaum and Crepeau [@brassard1988minimum]. In
+**arguments** by Brassard, Chaum and Crepeau  :cite:p:`brassard1988minimum`. In
 summary, zero-knowledge proofs satisfies the soundness requirements
 under the assumption of computationally unbounded provers whereas the
 zero-knowledge arguments satisfies this requirement under the assumption
@@ -258,7 +201,7 @@ efficient simulator :math:`S` which outputs an accepting transcript
 given any :math:`x` and :math:`c.`
 
 All in all, the ZKP implementations can be compared based on the
-following design choices [@zkproof2022]:
+following design choices  :cite:p:`zkproof2022`:
 
 1. Types of supported statements: a ZKP of knowledge or a ZKP of
    membership.
@@ -303,7 +246,7 @@ Metrics for Comparing ZKP Schemes
 =================================
 
 The efficiency of ZKP implementations can be compared based on the
-following performance metrics [@zkproof2022]. Here, we list the
+following performance metrics  :cite:p:`zkproof2022`. Here, we list the
 most-commonly used metrics.
 
 1. Proof size (succinctness): the size of the proof in comparison to the
@@ -332,7 +275,7 @@ In addition to these metrics, round complexity, parallelizability,
 batching, memory consumption, number of operations in the algorithms,
 memory consumption, disk and storage requirements can be considered as
 additional performance metrics for comparing various ZKP proposals
-[@zkproof2022].
+:cite:p:`zkproof2022`.
 
 Zero-Knowledge Succinct Non-Interactive ARgument of Knowledge (zk-SNARK)
 is a non-interactive ZKP protocol initially proposed by Bitansky et
@@ -353,7 +296,7 @@ Scalable Transparent Zero-knowledge Argument of Knowledge (zk-STARK)
 introduced by Ben-Sasson et al. in 2018. It is an Interactive Oracle
 Proofs (IOP) system. zk-STARK is more transparent, i.e., it needs no
 trusted set-up. zk-STARKS rely on collision-resistant hash functions.
-The zk-STARK-friendly hash function [@ben2020stark; @canteaut2020report]
+The zk-STARK-friendly hash function  :cite:p:`ben2020stark` :cite:p:`canteaut2020report`
 is the focus of extensive research campaign. Relying on hash functions,
 it is quantum resistant. A major disadvantage of zk-STARKS is the proof
 size compared to zk-SNARKS. There are some recent works that try to
@@ -367,16 +310,16 @@ lower compared to zk-STARK’s complexity that is
 zk-SNARK is :math:`\mathcal{O}(1)` whereas it is
 :math:`\mathcal{O}(\text{polylog}(C))` for zk-STARK.
 
-Aurora [@ben2019aurora] is a Zk-SNARK proposed by Ben-Sasson et al. in
+Aurora  :cite:p:`ben2019aurora`` is a Zk-SNARK proposed by Ben-Sasson et al. in
 2019. They developed the protocol for Rank-1 Constraint Satisfaction
 (R1CS) which is an NP-complete language. Aurora employs a public
 (transparent) setup phase. It is lightweight and quantum-safe. For the
 same number of constraints defined in R1CS, they accomplished reducing
 the proof size to 20 times shorter than the previous Zk-SNARK proposals.
 Aurora uses an interactive oracle proof for solving univariate version
-of the sumcheck problem [@lund1992algebraic].
+of the sumcheck problem  :cite:p:`lund1992algebraic`.
 
-Hyrax [@wahby2018doubly] is another Zk-SNARK variant proposed by Wahby
+Hyrax  :cite:p:`wahby2018doubly`` is another Zk-SNARK variant proposed by Wahby
 et al. in 2017. They convert an interactive proof of arithmetic circuit
 (AC) satisfiability to a ZKP scheme. Hyrax’s proofs are sublinear in
 circuit size (succinct), does not require a trusted setup phase, secure
@@ -394,12 +337,12 @@ method inner product algorithm. It can be non-interactive using
 Fiat-Shamir heuristic. One disadvantage of Bulletproof is, it takes more
 time to verify a bulletproof than to verify a SNARK proof.
 
-Libra [@cryptoeprint:2019/317] is zero-knowledge proof scheme that has
+Libra  :cite:p:`cryptoeprint:2019/317`` is zero-knowledge proof scheme that has
 both optimal prover time with a succinct proof size and
 :math:`\mathcal{O}(d \log C)` verification time. Different from the
 other proposals, Libra employs a one-time setup phase that does not have
 to be repeated per statement. It relies on the GKR protocol
-[@goldwasser2015delegating].
+:cite:p:`goldwasser2015delegating`.
 
 Adversary Model and Threat Analysis
 ===================================
@@ -411,8 +354,8 @@ be a set of statements about the capabilities (skill sets, advantages,
 assumptions, and also limitations) of the attacker and its goal. An
 adversary model can be an algorithm having some computation power.
 Adversary models are generally used to prove the security of the
-protocol. A widely used model is the Dolev-Yao model
-[@dolev1983security]. In the Dolev–Yao model, the adversary can listen
+protocol. A widely used model is the Dolev-Yao model  
+:cite:p:`dolev1983security`. In the Dolev–Yao model, the adversary can listen
 to communication between the principals and can send data/messages to
 principals. It may act as a man in the middle.
 
@@ -442,8 +385,8 @@ are satisfied. However, when zero-knowledge proofs are employed in
 applications such as identification or authentication, additional
 attacks can be implemented by an adversary. Below we briefly define the
 attack vectors and the associated adversary models are presented in
-:numref:`tab-attacks` [@major2020authentication; @walshe2019non;
-@grassi2021poseidon; @pathak2021secure; @Dwork2004; @UMAR2021102374].
+:numref:`tab-attacks`  :cite:p:`major2020authentication` :cite:p:`walshe2019non`
+:cite:p:`grassi2021poseidon` :cite:p:`pathak2021secure` :cite:p:`Dwork2004` :cite:p:`UMAR2021102374`.
 
 1. Impersonation attacks (masquerading as prover)
 
@@ -471,7 +414,7 @@ attack vectors and the associated adversary models are presented in
 7. Redundancy information attack (a passive adversary listens to all
    messages on the channel and tries to derive useful information)
 
-8. Timing attack (a passive adversary has access to system clocks and can measure how much time it takes for algorithms to run.) [@Dwork2004]
+8. Timing attack (a passive adversary has access to system clocks and can measure how much time it takes for algorithms to run.) :cite:p:`Dwork2004`
 
 
 .. _tab-attacks:
