@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sdzkp.max2sat &mdash; SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem 0.0.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=282f96c0"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../sdzkp.html">1. SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../requirements.html">2. SDZKP Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis.html">3. Performance Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../code.html">4. Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../bibliography.html">5. References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">sdzkp.max2sat</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for sdzkp.max2sat</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">product</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<div class="viewcode-block" id="Max2SAT">
+<a class="viewcode-back" href="../../generated/sdzkp.max2sat.html#sdzkp.max2sat.Max2SAT">[docs]</a>
+<span class="k">class</span> <span class="nc">Max2SAT</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to represent a MAX-2-SAT problem instance.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">    num_variables (int): Number of variables in the SAT instance.</span>
+<span class="sd">    num_clauses (int): Number of clauses in the SAT instance.</span>
+<span class="sd">    clauses (set): Set of clauses, where each clause is a tuple of two literals.</span>
+<span class="sd">    solution (list): A list representing the boolean assignment to variables.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_clauses</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes a Max2SAT instance with the given number of variables and clauses.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">        num_variables (int): The number of variables in the SAT instance.</span>
+<span class="sd">        num_clauses (int): The number of clauses in the SAT instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">num_variables</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_variables</span> <span class="o">=</span> <span class="n">num_variables</span>
+        <span class="k">if</span> <span class="n">num_clauses</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_clauses</span> <span class="o">=</span> <span class="n">num_clauses</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clauses</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>  <span class="c1"># Use a set to store unique clauses</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="Max2SAT.generate_instance_motoki">
+<a class="viewcode-back" href="../../generated/sdzkp.max2sat.html#sdzkp.max2sat.Max2SAT.generate_instance_motoki">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_instance_motoki</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a random instance of a MAX-2-SAT problem using a specific method.</span>
+
+<span class="sd">        Algorithm:</span>
+<span class="sd">            1. Initialize an empty formula `F`.</span>
+<span class="sd">            2. Randomly choose four distinct variables:</span>
+
+<span class="sd">            - `x_r1`, `x_r2`, `x_r3`, `x_r4`</span>
+
+<span class="sd">            3. Add initial clauses to `F`:</span>
+<span class="sd">            </span>
+<span class="sd">            - Add the clause `(x_r1, x_r2)` to `F`.</span>
+<span class="sd">            - Add the clause `(-x_r3, -x_r4)` to `F`.</span>
+
+<span class="sd">            4. Iteratively add clauses until `F` becomes unsatisfiable</span>
+
+<span class="sd">            - While `F` is satisfiable:</span>
+<span class="sd">                a. Randomly choose a pair of distinct variables `(x1, x2)`.</span>
+<span class="sd">                b. Add the clause `(x1, -x2)` to `F`.</span>
+
+<span class="sd">            5. Randomly choose a truth assignment `t` from `{0, 1}^n`.</span>
+
+<span class="sd">            6. Negate literals in `F` whose underlying variables are assigned `0` in `t`.</span>
+
+<span class="sd">            7. Return the formula `F` and the truth assignment `t`.</span>
+
+<span class="sd">                </span>
+<span class="sd">        Explanation:</span>
+
+<span class="sd">            - This algorithm begins by initializing an empty formula `F`.</span>
+<span class="sd">            - Four distinct variables are randomly selected from the set of available variables.</span>
+<span class="sd">            - The algorithm adds two initial clauses to `F` using these variables.</span>
+<span class="sd">            - It then iteratively adds more clauses to `F` until it becomes unsatisfiable, ensuring that the generated instance is challenging.</span>
+<span class="sd">            - A random truth assignment `t` is selected, and the literals in `F` are adjusted to make `t` the optimal solution.</span>
+<span class="sd">            - The resulting formula `F` and truth assignment `t` are returned as the outputs.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">        tuple: A tuple containing the set of clauses and the solution assignment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_variables</span><span class="p">)]</span>
+    
+        <span class="c1"># Step 1: Choose 4 distinct variables</span>
+        <span class="n">distinct_vars</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_variables</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">x_r1</span><span class="p">,</span> <span class="n">x_r2</span><span class="p">,</span> <span class="n">x_r3</span><span class="p">,</span> <span class="n">x_r4</span> <span class="o">=</span> <span class="n">distinct_vars</span>
+        
+        <span class="c1"># Step 2: Add initial clauses</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clauses</span><span class="o">.</span><span class="n">add</span><span class="p">(((</span><span class="n">x_r1</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="p">(</span><span class="n">x_r2</span><span class="p">,</span> <span class="kc">False</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clauses</span><span class="o">.</span><span class="n">add</span><span class="p">(((</span><span class="n">x_r3</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span> <span class="p">(</span><span class="n">x_r4</span><span class="p">,</span> <span class="kc">True</span><span class="p">)))</span>
+        
+        <span class="c1"># Step 3: Add clauses until the formula becomes unsatisfiable</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_satisfiable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clauses</span><span class="p">):</span>
+            <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_variables</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clauses</span><span class="o">.</span><span class="n">add</span><span class="p">(((</span><span class="n">x1</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="p">(</span><span class="n">x2</span><span class="p">,</span> <span class="kc">True</span><span class="p">)))</span>
+        
+        <span class="c1"># Step 4: Negate literals whose underlying variables are assigned False in the optimal assignment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">negate_literals</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_clauses</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clauses</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_instance</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">clauses</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">solution</span></div>
+
+    
+<div class="viewcode-block" id="Max2SAT.is_satisfiable">
+<a class="viewcode-back" href="../../generated/sdzkp.max2sat.html#sdzkp.max2sat.Max2SAT.is_satisfiable">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_satisfiable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">formula</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if a given formula (set of clauses) is satisfiable using Kosaraju&#39;s algorithm for finding SCCs.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">        formula (set): A set of clauses.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        bool: True if the formula is satisfiable, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Build implication graph</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="n">reverse_graph</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x_neg</span><span class="p">),</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_neg</span><span class="p">)</span> <span class="ow">in</span> <span class="n">formula</span><span class="p">:</span>
+            <span class="n">graph</span><span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="ow">not</span> <span class="n">x_neg</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">y</span><span class="p">,</span> <span class="n">y_neg</span><span class="p">))</span>
+            <span class="n">graph</span><span class="p">[(</span><span class="n">y</span><span class="p">,</span> <span class="ow">not</span> <span class="n">y_neg</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">x_neg</span><span class="p">))</span>
+            <span class="n">reverse_graph</span><span class="p">[(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_neg</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="ow">not</span> <span class="n">x_neg</span><span class="p">))</span>
+            <span class="n">reverse_graph</span><span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="n">x_neg</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">y</span><span class="p">,</span> <span class="ow">not</span> <span class="n">y_neg</span><span class="p">))</span>
+        
+        <span class="c1"># Kosaraju&#39;s algorithm to find SCCs</span>
+        <span class="k">def</span> <span class="nf">kosaraju_scc</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">reverse_graph</span><span class="p">):</span>
+            <span class="n">order</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            
+            <span class="k">def</span> <span class="nf">dfs1</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+                <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">neighbor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+                        <span class="n">dfs1</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
+                <span class="n">order</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+            
+            <span class="k">def</span> <span class="nf">dfs2</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">component</span><span class="p">):</span>
+                <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+                <span class="n">component</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">reverse_graph</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">neighbor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+                        <span class="n">dfs2</span><span class="p">(</span><span class="n">neighbor</span><span class="p">,</span> <span class="n">component</span><span class="p">)</span>
+            
+            <span class="c1"># First pass</span>
+            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">reverse_graph</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">if</span> <span class="n">node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+                    <span class="n">dfs1</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+            
+            <span class="c1"># Second pass</span>
+            <span class="n">visited</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="n">components</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">while</span> <span class="n">order</span><span class="p">:</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="n">order</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+                    <span class="n">component</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">dfs2</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">component</span><span class="p">)</span>
+                    <span class="n">components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">component</span><span class="p">)</span>
+            
+            <span class="k">return</span> <span class="n">components</span>
+        
+        <span class="n">sccs</span> <span class="o">=</span> <span class="n">kosaraju_scc</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">reverse_graph</span><span class="p">)</span>
+        
+        <span class="c1"># Check if any variable and its negation are in the same SCC</span>
+        <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">sccs</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">neg</span> <span class="ow">in</span> <span class="n">component</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="ow">not</span> <span class="n">neg</span><span class="p">)</span> <span class="ow">in</span> <span class="n">component</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+        
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+    
+<div class="viewcode-block" id="Max2SAT.negate_literals">
+<a class="viewcode-back" href="../../generated/sdzkp.max2sat.html#sdzkp.max2sat.Max2SAT.negate_literals">[docs]</a>
+    <span class="k">def</span> <span class="nf">negate_literals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Negates the literals in the clauses based on the solution, where the underlying variable is assigned False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_clauses</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">clause</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clauses</span><span class="p">:</span>
+            <span class="n">new_clause</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">neg</span> <span class="ow">in</span> <span class="n">clause</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                    <span class="n">new_clause</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">var</span><span class="p">,</span> <span class="ow">not</span> <span class="n">neg</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">new_clause</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">var</span><span class="p">,</span> <span class="n">neg</span><span class="p">))</span>
+            <span class="n">new_clauses</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">new_clause</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clauses</span> <span class="o">=</span> <span class="n">new_clauses</span></div>
+
+    
+<div class="viewcode-block" id="Max2SAT.create_default">
+<a class="viewcode-back" href="../../generated/sdzkp.max2sat.html#sdzkp.max2sat.Max2SAT.create_default">[docs]</a>
+    <span class="k">def</span> <span class="nf">create_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a default MAX-2-SAT instance with 3 variables and 4 clauses.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_variables</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_clauses</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clauses</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Literals are pairs (index, is_negated)</span>
+        <span class="c1"># x1 V x2</span>
+        <span class="n">l1</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">l2</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">clause</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clauses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">clause</span><span class="p">)</span>
+
+        <span class="c1"># NOTx1 V x3</span>
+        <span class="n">l1</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">l2</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">clause</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clauses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">clause</span><span class="p">)</span>
+
+        <span class="c1"># x2 V NOTx3</span>
+        <span class="n">l1</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">l2</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">clause</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clauses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">clause</span><span class="p">)</span>
+
+        <span class="c1"># NOTx2 V NOTx1</span>
+        <span class="n">l1</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">l2</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">clause</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clauses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">clause</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Max2SAT.add_clause">
+<a class="viewcode-back" href="../../generated/sdzkp.max2sat.html#sdzkp.max2sat.Max2SAT.add_clause">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_clause</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var1</span><span class="p">,</span> <span class="n">neg1</span><span class="p">,</span> <span class="n">var2</span><span class="p">,</span> <span class="n">neg2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a clause to the set of clauses.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">        var1 (int): The index of the first variable.</span>
+<span class="sd">        neg1 (bool): Whether the first literal is negated.</span>
+<span class="sd">        var2 (int): The index of the second variable.</span>
+<span class="sd">        neg2 (bool): Whether the second literal is negated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">clause</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">([(</span><span class="n">var1</span><span class="p">,</span> <span class="n">neg1</span><span class="p">),</span> <span class="p">(</span><span class="n">var2</span><span class="p">,</span> <span class="n">neg2</span><span class="p">)]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clauses</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">clause</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="Max2SAT.read_filenames_in_folder">
+<a class="viewcode-back" href="../../generated/sdzkp.max2sat.html#sdzkp.max2sat.Max2SAT.read_filenames_in_folder">[docs]</a>
+    <span class="k">def</span> <span class="nf">read_filenames_in_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads all filenames in the specified folder.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">        folder_path (str): The path to the folder.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        list: A list of filenames in the folder.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">filenames</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">folder_path</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">filenames</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;An error occurred: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="Max2SAT.read_dimacs_file">
+<a class="viewcode-back" href="../../generated/sdzkp.max2sat.html#sdzkp.max2sat.Max2SAT.read_dimacs_file">[docs]</a>
+    <span class="k">def</span> <span class="nf">read_dimacs_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads a DIMACS formatted file and initializes the SAT instance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">        filepath (str): The path to the DIMACS file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_variables</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_clauses</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clauses</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="n">clauses</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">):</span>
+                <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">num_variables</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">num_clauses</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;c&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;%&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;%&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="n">var1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">var2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                <span class="n">clauses</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">var1</span><span class="p">,</span> <span class="n">var2</span><span class="p">))</span>
+        
+        <span class="k">for</span> <span class="n">var1</span><span class="p">,</span> <span class="n">var2</span> <span class="ow">in</span> <span class="n">clauses</span><span class="p">:</span>
+            <span class="n">neg1</span> <span class="o">=</span> <span class="n">var1</span> <span class="o">&lt;</span> <span class="mi">0</span>
+            <span class="n">neg2</span> <span class="o">=</span> <span class="n">var2</span> <span class="o">&lt;</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_clause</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">var1</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">neg1</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">var2</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">neg2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Max2SAT.write_solution_to_file">
+<a class="viewcode-back" href="../../generated/sdzkp.max2sat.html#sdzkp.max2sat.Max2SAT.write_solution_to_file">[docs]</a>
+    <span class="k">def</span> <span class="nf">write_solution_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">,</span> <span class="n">solution</span><span class="p">,</span> <span class="n">num_satisfied_clauses</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes the solution and the number of satisfied clauses to a file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">        filepath (str): The path to the file where the solution will be written.</span>
+<span class="sd">        solution (list): The solution assignment for the variables.</span>
+<span class="sd">        num_satisfied_clauses (int): The number of satisfied clauses.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+                <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Solution:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">solution</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Number of satisfied clauses:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">num_satisfied_clauses</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;An error occurred while writing to the file: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Max2SAT.read_solution_from_file">
+<a class="viewcode-back" href="../../generated/sdzkp.max2sat.html#sdzkp.max2sat.Max2SAT.read_solution_from_file">[docs]</a>
+    <span class="k">def</span> <span class="nf">read_solution_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads the solution and the number of satisfied clauses from a file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">        filepath (str): The path to the file to be read.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        tuple: A tuple containing the solution (list of bool) and the number of satisfied clauses (int).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+                <span class="n">lines</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+            
+            <span class="n">solution_line</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">solution</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">solution_line</span><span class="p">)</span>  <span class="c1"># Convert string representation of list to actual list</span>
+
+            <span class="n">num_satisfied_clauses_line</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">num_satisfied_clauses</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_satisfied_clauses_line</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">solution</span><span class="p">,</span> <span class="n">num_satisfied_clauses</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;An error occurred while reading the file: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Max2SAT.generate_satisfiable_clause">
+<a class="viewcode-back" href="../../generated/sdzkp.max2sat.html#sdzkp.max2sat.Max2SAT.generate_satisfiable_clause">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_satisfiable_clause</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assignment</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a satisfiable clause given an assignment.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">        assignment (list): The boolean assignment for the variables.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        tuple: A satisfiable clause based on the assignment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">var1</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_variables</span><span class="p">)</span>
+            <span class="n">var2</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_variables</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">var1</span> <span class="o">!=</span> <span class="n">var2</span><span class="p">:</span>
+                <span class="n">is_negated1</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">assignment</span><span class="p">[</span><span class="n">var1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">is_negated2</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">assignment</span><span class="p">[</span><span class="n">var2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">literal1</span> <span class="o">=</span> <span class="p">(</span><span class="n">var1</span><span class="p">,</span> <span class="n">is_negated1</span><span class="p">)</span>
+                <span class="n">literal2</span> <span class="o">=</span> <span class="p">(</span><span class="n">var2</span><span class="p">,</span> <span class="n">is_negated2</span><span class="p">)</span>
+                <span class="n">clause</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">([</span><span class="n">literal1</span><span class="p">,</span> <span class="n">literal2</span><span class="p">]))</span>
+                <span class="k">return</span> <span class="n">clause</span></div>
+
+
+<div class="viewcode-block" id="Max2SAT.generate_unsatisfiable_specific_clause">
+<a class="viewcode-back" href="../../generated/sdzkp.max2sat.html#sdzkp.max2sat.Max2SAT.generate_unsatisfiable_specific_clause">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_unsatisfiable_specific_clause</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var1</span><span class="p">,</span> <span class="n">var2</span><span class="p">,</span> <span class="n">assignment</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates an unsatisfiable clause given specific variables and an assignment.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">        var1 (int): The index of the first variable.</span>
+<span class="sd">        var2 (int): The index of the second variable.</span>
+<span class="sd">        assignment (list): The boolean assignment for the variables.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        tuple: An unsatisfiable clause based on the assignment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">var1</span> <span class="o">!=</span> <span class="n">var2</span><span class="p">:</span>
+            <span class="n">is_negated1</span> <span class="o">=</span> <span class="n">assignment</span><span class="p">[</span><span class="n">var1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">is_negated2</span> <span class="o">=</span> <span class="n">assignment</span><span class="p">[</span><span class="n">var2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">literal1</span> <span class="o">=</span> <span class="p">(</span><span class="n">var1</span><span class="p">,</span> <span class="n">is_negated1</span><span class="p">)</span>
+            <span class="n">literal2</span> <span class="o">=</span> <span class="p">(</span><span class="n">var2</span><span class="p">,</span> <span class="n">is_negated2</span><span class="p">)</span>
+            <span class="n">clause</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">([</span><span class="n">literal1</span><span class="p">,</span> <span class="n">literal2</span><span class="p">]))</span>
+            <span class="k">return</span> <span class="n">clause</span></div>
+
+
+<div class="viewcode-block" id="Max2SAT.generate_unsatisfiable_clause">
+<a class="viewcode-back" href="../../generated/sdzkp.max2sat.html#sdzkp.max2sat.Max2SAT.generate_unsatisfiable_clause">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_unsatisfiable_clause</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assignment</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates an unsatisfiable clause given an assignment.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">        assignment (list): The boolean assignment for the variables.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        tuple: An unsatisfiable clause based on the assignment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">var1</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_variables</span><span class="p">)</span>
+            <span class="n">var2</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_variables</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">var1</span> <span class="o">!=</span> <span class="n">var2</span><span class="p">:</span>
+                <span class="n">is_negated1</span> <span class="o">=</span> <span class="n">assignment</span><span class="p">[</span><span class="n">var1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">is_negated2</span> <span class="o">=</span> <span class="n">assignment</span><span class="p">[</span><span class="n">var2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">literal1</span> <span class="o">=</span> <span class="p">(</span><span class="n">var1</span><span class="p">,</span> <span class="n">is_negated1</span><span class="p">)</span>
+                <span class="n">literal2</span> <span class="o">=</span> <span class="p">(</span><span class="n">var2</span><span class="p">,</span> <span class="n">is_negated2</span><span class="p">)</span>
+                <span class="n">clause</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">([</span><span class="n">literal1</span><span class="p">,</span> <span class="n">literal2</span><span class="p">]))</span>
+                <span class="k">return</span> <span class="n">clause</span></div>
+
+
+<div class="viewcode-block" id="Max2SAT.is_clause_satisfied">
+<a class="viewcode-back" href="../../generated/sdzkp.max2sat.html#sdzkp.max2sat.Max2SAT.is_clause_satisfied">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_clause_satisfied</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clause</span><span class="p">,</span> <span class="n">assignment</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if a clause is satisfied under a given assignment.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">        clause (tuple): The clause to check.</span>
+<span class="sd">        assignment (list): The boolean assignment for the variables.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        bool: True if the clause is satisfied, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lit1</span><span class="p">,</span> <span class="n">lit2</span> <span class="o">=</span> <span class="n">clause</span>
+        <span class="n">var1</span><span class="p">,</span> <span class="n">is_negated1</span> <span class="o">=</span> <span class="n">lit1</span>
+        <span class="n">var2</span><span class="p">,</span> <span class="n">is_negated2</span> <span class="o">=</span> <span class="n">lit2</span>
+        <span class="n">val1</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">assignment</span><span class="p">[</span><span class="n">var1</span><span class="p">]</span> <span class="k">if</span> <span class="n">is_negated1</span> <span class="k">else</span> <span class="n">assignment</span><span class="p">[</span><span class="n">var1</span><span class="p">]</span>
+        <span class="n">val2</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">assignment</span><span class="p">[</span><span class="n">var2</span><span class="p">]</span> <span class="k">if</span> <span class="n">is_negated2</span> <span class="k">else</span> <span class="n">assignment</span><span class="p">[</span><span class="n">var2</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">val1</span> <span class="ow">or</span> <span class="n">val2</span></div>
+
+
+<div class="viewcode-block" id="Max2SAT.check_instance">
+<a class="viewcode-back" href="../../generated/sdzkp.max2sat.html#sdzkp.max2sat.Max2SAT.check_instance">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">solution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks how many clauses are satisfied by a given solution.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">        solution (list): The boolean assignment for the variables (optional).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        int: The number of satisfied clauses.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">solution</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">solution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solution</span>
+        <span class="n">satisfied_clauses_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">clause</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clauses</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_clause_satisfied</span><span class="p">(</span><span class="n">clause</span><span class="p">,</span> <span class="n">solution</span><span class="p">):</span>
+                <span class="n">satisfied_clauses_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">satisfied_clauses_count</span></div>
+
+
+<div class="viewcode-block" id="Max2SAT.print_clause">
+<a class="viewcode-back" href="../../generated/sdzkp.max2sat.html#sdzkp.max2sat.Max2SAT.print_clause">[docs]</a>
+    <span class="k">def</span> <span class="nf">print_clause</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clause</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prints a clause in a human-readable format.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">        clause (tuple): The clause to print.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lit1</span><span class="p">,</span> <span class="n">lit2</span> <span class="o">=</span> <span class="n">clause</span>
+        <span class="n">lit1_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;¬x</span><span class="si">{</span><span class="n">lit1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">lit1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;x</span><span class="si">{</span><span class="n">lit1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">lit2_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;¬x</span><span class="si">{</span><span class="n">lit2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">lit2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;x</span><span class="si">{</span><span class="n">lit2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">lit1_str</span><span class="si">}</span><span class="s2"> ∨ </span><span class="si">{</span><span class="n">lit2_str</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="Max2SAT.print_instance">
+<a class="viewcode-back" href="../../generated/sdzkp.max2sat.html#sdzkp.max2sat.Max2SAT.print_instance">[docs]</a>
+    <span class="k">def</span> <span class="nf">print_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prints the entire SAT instance, including all clauses and the current solution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">clause</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clauses</span><span class="p">:</span>
+            <span class="n">lit1</span><span class="p">,</span> <span class="n">lit2</span> <span class="o">=</span> <span class="n">clause</span>
+            <span class="n">lit1_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;¬x</span><span class="si">{</span><span class="n">lit1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">lit1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;x</span><span class="si">{</span><span class="n">lit1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">lit2_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;¬x</span><span class="si">{</span><span class="n">lit2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">lit2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;x</span><span class="si">{</span><span class="n">lit2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">lit1_str</span><span class="si">}</span><span class="s2"> ∨ </span><span class="si">{</span><span class="n">lit2_str</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Solution:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="Max2SAT.solve">
+<a class="viewcode-back" href="../../generated/sdzkp.max2sat.html#sdzkp.max2sat.Max2SAT.solve">[docs]</a>
+    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solves the MAX-2-SAT instance using a greedy algorithm to maximize the number of satisfied clauses.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        tuple: The best assignment found and the number of satisfied clauses.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">assignment</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_variables</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_variables</span><span class="p">):</span>
+            <span class="n">true_assignment</span> <span class="o">=</span> <span class="n">assignment</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">true_assignment</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">false_assignment</span> <span class="o">=</span> <span class="n">assignment</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">false_assignment</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="n">true_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_instance</span><span class="p">(</span><span class="n">solution</span><span class="o">=</span><span class="n">true_assignment</span><span class="p">)</span>
+            <span class="n">false_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_instance</span><span class="p">(</span><span class="n">solution</span><span class="o">=</span><span class="n">false_assignment</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">true_count</span> <span class="o">&lt;</span> <span class="n">false_count</span><span class="p">:</span>
+                <span class="n">assignment</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">assignment</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_instance</span><span class="p">(</span><span class="n">assignment</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="n">assignment</span>
+        <span class="k">return</span> <span class="n">assignment</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span></div>
+
+
+<div class="viewcode-block" id="Max2SAT.enumerate_all_assignments">
+<a class="viewcode-back" href="../../generated/sdzkp.max2sat.html#sdzkp.max2sat.Max2SAT.enumerate_all_assignments">[docs]</a>
+    <span class="k">def</span> <span class="nf">enumerate_all_assignments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enumerates all possible assignments to find the one that satisfies the most clauses.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        tuple: A list of the best assignments found and the number of satisfied clauses.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">max_satisfied</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">best_assignment</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">assignment</span> <span class="ow">in</span> <span class="n">product</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span> <span class="n">repeat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_variables</span><span class="p">):</span>
+            <span class="n">satisfied_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_instance</span><span class="p">(</span><span class="n">assignment</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="n">satisfied_count</span> <span class="o">&gt;</span> <span class="n">max_satisfied</span><span class="p">:</span>
+                <span class="n">best_assignment</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+                <span class="n">max_satisfied</span> <span class="o">=</span> <span class="n">satisfied_count</span>
+                <span class="n">best_assignment</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">assignment</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">satisfied_count</span> <span class="o">==</span> <span class="n">max_satisfied</span><span class="p">:</span>
+                <span class="n">best_assignment</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">assignment</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Check if solution is in best assignments:&quot;</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="p">)</span> <span class="ow">in</span> <span class="n">best_assignment</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">best_assignment</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Assignment: </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">, Satisfied Clauses: </span><span class="si">{</span><span class="n">max_satisfied</span><span class="si">}</span><span class="s2">, Check: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">check_instance</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">best_assignment</span><span class="p">,</span> <span class="n">max_satisfied</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Cansu Betin Onur.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

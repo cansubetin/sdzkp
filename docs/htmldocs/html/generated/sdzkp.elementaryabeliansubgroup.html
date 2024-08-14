@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4.2. sdzkp.elementaryabeliansubgroup &mdash; SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem 0.0.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=282f96c0"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="4.3. sdzkp.prover" href="sdzkp.prover.html" />
+    <link rel="prev" title="4.1. sdzkp.max2sat" href="sdzkp.max2sat.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../sdzkp.html">1. SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../requirements.html">2. SDZKP Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html">3. Performance Analysis</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../code.html">4. Code Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="sdzkp.max2sat.html">4.1. sdzkp.max2sat</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.2. sdzkp.elementaryabeliansubgroup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup"><code class="docutils literal notranslate"><span class="pre">ElementaryAbelianSubgroup</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.is_valid_permutation"><code class="docutils literal notranslate"><span class="pre">ElementaryAbelianSubgroup.is_valid_permutation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.transpose"><code class="docutils literal notranslate"><span class="pre">ElementaryAbelianSubgroup.transpose()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.multiply_permutations"><code class="docutils literal notranslate"><span class="pre">ElementaryAbelianSubgroup.multiply_permutations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.multiply_generators"><code class="docutils literal notranslate"><span class="pre">ElementaryAbelianSubgroup.multiply_generators()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.inverse"><code class="docutils literal notranslate"><span class="pre">ElementaryAbelianSubgroup.inverse()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.random_binary_array"><code class="docutils literal notranslate"><span class="pre">ElementaryAbelianSubgroup.random_binary_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.generate_element_from_bitarray"><code class="docutils literal notranslate"><span class="pre">ElementaryAbelianSubgroup.generate_element_from_bitarray()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.random_element"><code class="docutils literal notranslate"><span class="pre">ElementaryAbelianSubgroup.random_element()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.solve"><code class="docutils literal notranslate"><span class="pre">ElementaryAbelianSubgroup.solve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.hamming_distance"><code class="docutils literal notranslate"><span class="pre">ElementaryAbelianSubgroup.hamming_distance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.generate_all_elements"><code class="docutils literal notranslate"><span class="pre">ElementaryAbelianSubgroup.generate_all_elements()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.print_all_elements"><code class="docutils literal notranslate"><span class="pre">ElementaryAbelianSubgroup.print_all_elements()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.inverse_permutation"><code class="docutils literal notranslate"><span class="pre">ElementaryAbelianSubgroup.inverse_permutation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.apply_generators"><code class="docutils literal notranslate"><span class="pre">ElementaryAbelianSubgroup.apply_generators()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroupWithSolution"><code class="docutils literal notranslate"><span class="pre">ElementaryAbelianSubgroupWithSolution</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroupWithSolution.multiply_solution_generators"><code class="docutils literal notranslate"><span class="pre">ElementaryAbelianSubgroupWithSolution.multiply_solution_generators()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="sdzkp.prover.html">4.3. sdzkp.prover</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdzkp.verifier.html">4.4. sdzkp.verifier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdzkp.sgd.html">4.5. sdzkp.sgd</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../bibliography.html">5. References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../code.html"><span class="section-number">4. </span>Code Documentation</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">4.2. </span>sdzkp.elementaryabeliansubgroup</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-sdzkp.elementaryabeliansubgroup">
+<span id="sdzkp-elementaryabeliansubgroup"></span><h1><span class="section-number">4.2. </span>sdzkp.elementaryabeliansubgroup<a class="headerlink" href="#module-sdzkp.elementaryabeliansubgroup" title="Link to this heading"></a></h1>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sdzkp.elementaryabeliansubgroup.</span></span><span class="sig-name descname"><span class="pre">ElementaryAbelianSubgroup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generators</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/elementaryabeliansubgroup.html#ElementaryAbelianSubgroup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup" title="Link to this definition"></a></dt>
+<dd><p>A class to represent an elementary abelian subgroup of the symmetric group Sn.
+The subgroup is generated by a set of permutations.</p>
+<p>Initializes an ElementaryAbelianSubgroup instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<em>int</em>) – The number of elements in the symmetric group Sn.</p></li>
+<li><p><strong>generators</strong> (<em>dict</em>) – A dictionary of generators for the subgroup.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.is_valid_permutation">
+<span class="sig-name descname"><span class="pre">is_valid_permutation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/elementaryabeliansubgroup.html#ElementaryAbelianSubgroup.is_valid_permutation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.is_valid_permutation" title="Link to this definition"></a></dt>
+<dd><p>Checks if a given permutation is valid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>perm</strong> (<em>list</em>) – A permutation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the permutation is valid, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.transpose">
+<span class="sig-name descname"><span class="pre">transpose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/elementaryabeliansubgroup.html#ElementaryAbelianSubgroup.transpose"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.transpose" title="Link to this definition"></a></dt>
+<dd><p>Transposes two elements in the permutation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>perm</strong> (<em>list</em>) – The permutation.</p></li>
+<li><p><strong>i</strong> (<em>int</em>) – Index of the first element.</p></li>
+<li><p><strong>j</strong> (<em>int</em>) – Index of the second element.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The permutation after transposition.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.multiply_permutations">
+<span class="sig-name descname"><span class="pre">multiply_permutations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perm1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perm2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/elementaryabeliansubgroup.html#ElementaryAbelianSubgroup.multiply_permutations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.multiply_permutations" title="Link to this definition"></a></dt>
+<dd><p>Multiplies two permutations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>perm1</strong> (<em>list</em>) – The first permutation.</p></li>
+<li><p><strong>perm2</strong> (<em>list</em>) – The second permutation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The resulting permutation after multiplication.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.multiply_generators">
+<span class="sig-name descname"><span class="pre">multiply_generators</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/elementaryabeliansubgroup.html#ElementaryAbelianSubgroup.multiply_generators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.multiply_generators" title="Link to this definition"></a></dt>
+<dd><p>Multiplies all generators to produce a single permutation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The resulting permutation after multiplying all generators.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.inverse">
+<span class="sig-name descname"><span class="pre">inverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/elementaryabeliansubgroup.html#ElementaryAbelianSubgroup.inverse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.inverse" title="Link to this definition"></a></dt>
+<dd><p>Computes the inverse of a permutation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>perm</strong> (<em>list</em>) – The permutation to be inverted.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new instance with the inverse permutation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup" title="sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup">ElementaryAbelianSubgroup</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.random_binary_array">
+<span class="sig-name descname"><span class="pre">random_binary_array</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/elementaryabeliansubgroup.html#ElementaryAbelianSubgroup.random_binary_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.random_binary_array" title="Link to this definition"></a></dt>
+<dd><p>Generates a random binary array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of random 0s and 1s.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.generate_element_from_bitarray">
+<span class="sig-name descname"><span class="pre">generate_element_from_bitarray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bit_array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/elementaryabeliansubgroup.html#ElementaryAbelianSubgroup.generate_element_from_bitarray"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.generate_element_from_bitarray" title="Link to this definition"></a></dt>
+<dd><p>Generates an element of the subgroup from a binary array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bit_array</strong> (<em>list</em>) – A binary array indicating which generators to use.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the generated permutation and the bit array.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.random_element">
+<span class="sig-name descname"><span class="pre">random_element</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/elementaryabeliansubgroup.html#ElementaryAbelianSubgroup.random_element"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.random_element" title="Link to this definition"></a></dt>
+<dd><p>Generates a random element of the subgroup.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A tuple containing the random permutation and the bit array used to generate it.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/elementaryabeliansubgroup.html#ElementaryAbelianSubgroup.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.solve" title="Link to this definition"></a></dt>
+<dd><p>Solves the subgroup distance problem by finding the element closest to a given permutation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>g</strong> (<em>list</em>) – The target permutation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The closest element in the subgroup and the Hamming distance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.hamming_distance">
+<span class="sig-name descname"><span class="pre">hamming_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/elementaryabeliansubgroup.html#ElementaryAbelianSubgroup.hamming_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.hamming_distance" title="Link to this definition"></a></dt>
+<dd><p>Calculates the Hamming distance between two permutations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p1</strong> (<em>list</em>) – The first permutation.</p></li>
+<li><p><strong>p2</strong> (<em>list</em>) – The second permutation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Hamming distance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.generate_all_elements">
+<span class="sig-name descname"><span class="pre">generate_all_elements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/elementaryabeliansubgroup.html#ElementaryAbelianSubgroup.generate_all_elements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.generate_all_elements" title="Link to this definition"></a></dt>
+<dd><p>Generates all elements of the subgroup.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of all permutations in the subgroup.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.print_all_elements">
+<span class="sig-name descname"><span class="pre">print_all_elements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/elementaryabeliansubgroup.html#ElementaryAbelianSubgroup.print_all_elements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.print_all_elements" title="Link to this definition"></a></dt>
+<dd><p>Prints all elements of the subgroup.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.inverse_permutation">
+<span class="sig-name descname"><span class="pre">inverse_permutation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/elementaryabeliansubgroup.html#ElementaryAbelianSubgroup.inverse_permutation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.inverse_permutation" title="Link to this definition"></a></dt>
+<dd><p>Returns the inverse of a permutation.
+Since we use only transpositions, the elements are their own inverses.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>perm</strong> (<em>list</em>) – The permutation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The inverse permutation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.apply_generators">
+<span class="sig-name descname"><span class="pre">apply_generators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bitmask</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/elementaryabeliansubgroup.html#ElementaryAbelianSubgroup.apply_generators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup.apply_generators" title="Link to this definition"></a></dt>
+<dd><p>Applies the generators to the identity permutation based on a bitmask.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bitmask</strong> (<em>int</em>) – A bitmask indicating which generators to apply.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The resulting permutation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroupWithSolution">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sdzkp.elementaryabeliansubgroup.</span></span><span class="sig-name descname"><span class="pre">ElementaryAbelianSubgroupWithSolution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generators</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solution_t_h</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/elementaryabeliansubgroup.html#ElementaryAbelianSubgroupWithSolution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroupWithSolution" title="Link to this definition"></a></dt>
+<dd><p>A subclass of ElementaryAbelianSubgroup that includes a solution to the subgroup distance problem.</p>
+<p>Initializes an ElementaryAbelianSubgroupWithSolution instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<em>int</em>) – The number of elements in the symmetric group Sn.</p></li>
+<li><p><strong>generators</strong> (<em>dict</em>) – A dictionary of generators for the subgroup.</p></li>
+<li><p><strong>solution_t_h</strong> (<em>list</em>) – A bit array that generates the solution.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroupWithSolution.multiply_solution_generators">
+<span class="sig-name descname"><span class="pre">multiply_solution_generators</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/elementaryabeliansubgroup.html#ElementaryAbelianSubgroupWithSolution.multiply_solution_generators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroupWithSolution.multiply_solution_generators" title="Link to this definition"></a></dt>
+<dd><p>Multiplies the generators specified by the solution bit array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A tuple containing the resulting permutation and the bit array.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="sdzkp.max2sat.html" class="btn btn-neutral float-left" title="4.1. sdzkp.max2sat" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sdzkp.prover.html" class="btn btn-neutral float-right" title="4.3. sdzkp.prover" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Cansu Betin Onur.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
