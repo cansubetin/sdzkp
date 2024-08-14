@@ -1,13 +1,17 @@
-==================
-SDZKP Requirements 
-==================
+===================
+SDZKP Specification 
+===================
 
-In this section, we present the abstract model of zero-knowledge proof
-(ZKP) schemes, the security requirements, design choices, performance
-metrics, adversary model and threat analysis.
+In this section, we present the software design model of zero-knowledge proof
+(ZKP) schemes, the security requirements, performance
+metrics, adversary model and threat analysis. We highlight the
+fundamental principles of ZKP, distinguishing between proofs of
+membership and proofs of knowledge. We delve into the essential
+security properties of completeness, soundness, and zero-knowledge,
+outlining their formal definitions and practical implications. 
 
-Software Model
-==============
+Software Design Model
+=====================
 
 In a ZKP scheme, the statements (claims) are formally represented as a
 relation :math:`R` between instances denoted as :math:`x` and witnesses
@@ -107,6 +111,12 @@ This protocol should be repeated sufficiently many times. If it is
 applied only once, Alice can cheat Bob with probability at most
 :math:`\frac{1}{2} .` If it is repeated :math:`m` times, then this
 probability is reduced to :math:`\frac{1}{2^m} .`
+
+
+SDZKP is a three move Stern-type zero-knowledge proof scheme similar to the architecture
+shown in :numref:`fig-zkparch`. The details of the design decisions regarding the implementation
+of the protocol can be found in :cite:p:`onur2024zeroknowledgeproofknowledgesubgroup`.
+
 
 .. _`sec:securityreq`:
 
@@ -481,19 +491,3 @@ attack vectors and the associated adversary models are presented in
       |           | formation |          |        |           |           |
       +-----------+-----------+----------+--------+-----------+-----------+
 
-This section presents a comprehensive analysis of Zero-Knowledge Proof
-(ZKP) schemes, focusing on their software models, security requirements,
-design choices, and performance metrics. We highlight the
-fundamental principles of ZKP, distinguishing between proofs of
-membership and proofs of knowledge. We delve into the essential
-security properties of completeness, soundness, and zero-knowledge,
-outlining their formal definitions and practical implications. We categorize ZKP schemes based on their need for a
-trusted setup, interaction patterns, and underlying cryptographic
-assumptions. Notable ZKP implementations such as zk-SNARKs and zk-STARKs
-are compared in terms of proof size, computational complexity, and
-security features. The analysis extends to newer protocols like Aurora
-and Bulletproof, discussing their unique advantages and limitations. The adversary 
-model and threat analysis part provides a detailed
-account of potential attacks and the corresponding adversarial
-capabilities, emphasizing the importance of robust security measures in
-ZKP protocols. 

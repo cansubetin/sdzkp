@@ -10,15 +10,13 @@ Setup Related Tasks
 ===================
 
 In this section, we present the performance evaluation results for NP problem instance generation. The subgroup distance problem (SGD) 
-relies on Max2SAT instances. We firstly create a Max2SAT instance using Motoki's algorithm. Then we convert the Max2SAT instance to SGD instance
+relies on Max2SAT instances. We firstly create a Max2SAT instance using Motoki's algorithm :cite:p:`motoki2005test`. Then, we convert the Max2SAT instance to SGD instance
 using our novel approach.
 
 Max2SAT Instance Generation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For Max2SAT instance generation we use Motoki's approach: Mitsuo Motoki , "Test Instance Generation for MAX 2SAT with Fixed Optimal Value", Japan Advanced Institute of Science and Technology, School of Information Science
-
-The paper proposes a randomized algorithm to generate test instances for the MAX 2SAT problem. The algorithm ensures that the generated instances have exactly one unsatisfied clause at the optimal solution, with a probability of 1. The author proves that the number of clauses in the generated instances is, with high probability, greater than the number of variables, aligning with known thresholds for unsatisfiability in random 2CNF formulas.
+For Max2SAT instance generation we use Motoki's approach as presented in :cite:p:`motoki2005test` that proposes a randomized algorithm to generate test instances for the MAX 2SAT problem. The algorithm ensures that the generated instances have exactly one unsatisfied clause at the optimal solution, with a probability of 1. The author proves that the number of clauses in the generated instances is, with high probability, greater than the number of variables, aligning with known thresholds for unsatisfiability in random 2CNF formulas.
 
 MAX 2SAT is a well-known NP-complete combinatorial optimization problem, where the goal is to find a truth assignment that maximizes the number of satisfied clauses in a 2CNF formula. To evaluate the performance of approximation algorithms for MAX 2SAT, both theoretical analysis and empirical studies are used. However, empirical studies require test instances with known optimal solutions. The paper addresses the challenge of generating such instances randomly.
 
@@ -53,7 +51,7 @@ Subgroup Distance Problem Generation
 
 
 :numref:`fig-sgd_benchmark_with_ci`  illustrates the execution time required to generate an instance of the Subgroup 
-Distance (SGD) problem as a function of the number of generators. The plot includes error bars representing a 95% 
+Distance (SGD) problem as a function of the number of generators which is two times the number of variables in the employed Max2SAT instance. The plot includes error bars representing a 95% 
 confidence interval, providing insight into the variability of the timing measurements. As the number of generators 
 increases, the execution time rises significantly, showing a clear upward trend that appears to be nonlinear. This 
 indicates that the complexity of generating an SGD instance grows rapidly with the number of generators. The increasing 
@@ -138,7 +136,7 @@ distance problem.
    The execution times with 95% confidence for completeness validation.
 
 
-:numref:`fig-completeness_with_ci`  The figure depicts the execution time required for an honest prover to demonstrate completeness 
+:numref:`fig-completeness_with_ci`  depicts the execution time required for an honest prover to demonstrate completeness 
 in a proof system, plotted against the number of generators. The plot shows a clear upward trend, 
 indicating that as the number of generators increases, the execution time also increases significantly. 
 The relationship between the number of generators and execution time appears to be approximately 
@@ -148,19 +146,17 @@ The confidence intervals are relatively small, particularly for lower numbers of
 suggesting consistent execution times in those cases. However, as the number of generators 
 increases, the confidence intervals widen slightly, indicating a growing uncertainty or variability 
 in execution time. This could be attributed to the increasing computational complexity as the 
-problem scales. Overall, the figure effectively illustrates the impact of increasing the number 
-of generators on the time required for an honest prover to demonstrate completeness, highlighting 
-both the trend and the associated variability.
+problem scales. 
 
 
 Soundness Validation
 ~~~~~~~~~~~~~~~~~~~~
 
 In this scenario, the prover is dishonest, it knows the public parameters of the SGD problem.
-The prover creates a random solution; that is, it selects a subset of generators that produces a subgroup
-element randomly. That he tries to convince the verifier that it knows the solution. In any protocol run,
+The dishonest prover creates a random solution; that is, it selects a subset of generators that produces a subgroup
+element randomly. Then, he tries to convince the verifier that it knows the solution. In any protocol run,
 if the verifier returns a False (not verified) result in any round, then the protocol run is assumed to
-fail, otherwise the protocol run is countes as verified. The benchmark code for validating the soundness of the 
+fail, otherwise the protocol run is counted as verified. The benchmark code for validating the soundness of the 
 SDZKP is designed to find the ratio of  verified (returned True) protocol runs to the total number of 
 protocol runs that we refer to as the cheating probability since the prover is dishonest.  :numref:`fig-soundness_cheating_prob` 
 shows the cheating probability for 1000 simulation runs where the number of generators is set to 8 in SGD problem. As expected,
