@@ -6,7 +6,7 @@ In this section, we present the abstract model of zero-knowledge proof
 (ZKP) schemes, the security requirements, design choices, performance
 metrics, adversary model and threat analysis.
 
-Abstract Model
+Software Model
 ==============
 
 In a ZKP scheme, the statements (claims) are formally represented as a
@@ -32,7 +32,7 @@ size of the input given to the circuit :math:`n=|x|` where
 A zero-knowledge proof facilitates proving that a statement is true
 while preserving some secret (and privacy-sensitive) information. The
 claims about privacy-sensitive data can be defined as statements. For
-instance, the claim, ’I am older than 18 years old" is a **statement**
+instance, the claim, "I am older than 18 years old" is a **statement**
 that is to be proven. An identity card (e.g., TCKK) is an **instance**
 of this statement. The birth date and personal information of the person
 signed by the government is the **witness** of this instance. A general
@@ -133,7 +133,7 @@ a random oracle model. A common approach to achive a NIZKP is to convert
 an interactive protocol into a non-interactive one using the Fiat–Shamir heuristic.
 The zero-knowledge property is shown by using a probabilistic polynomial-time algorithm  
 called simulator. It ensures that the verifier gains no additional information by giving  
-outputs indistinguishable from the verifier’s without having a witness. The idea of the simulation paradigm :cite:p:`oded2001foundations` is 
+outputs indistinguishable from the verifier's without having a witness. The idea of the simulation paradigm :cite:p:`oded2001foundations` is 
 “whatever a party can do by itself cannot be considered a gain from interaction with the outside."
 Let us explain zero knowledge property more formally. 
 
@@ -173,7 +173,7 @@ that it remains insignificant,  no matter how much computational power the verif
 possesses. Although the two distributions differ, their statistical distance is negligible.  
 If protocol allows for some information leakage, but only to an extent that is negligible for 
 a verifier with limited (probabilistic polynomial-time) computational resources, 
-then it is called **computational zero knowledge **. 
+then it is called **computational zero knowledge**. 
 
 
 Next we give a stronger property then soundness condition:
@@ -190,14 +190,8 @@ is said to be :math:`k`-Special Sound (out of :math:`N`) if there exists a PPT a
 a statement :math:`x` and :math:`k`-many accepting transcripts :math:`(a,c_1,z_1), \dots, (a,c_k,z_k)`` for the same commitment
 with different challanges, it outputs a witness :math:`w`` satisfying :math:`(x,w) \in R.`
 
-It is known that a :math:`k`-Special Sound IP with challenge space with :math:`N` elements has 
-knowledge soundness with knowledge error :math:`\frac{k-1}{N}.'  :cite:p:`attema2021compressed'
-
-
-
-
-
-
+It is known that a :math:`k-` Special Sound IP with challenge space with :math:`N` elements has 
+knowledge soundness with knowledge error :math:`\frac{k-1}{N}` :cite:p:`attema2021compressed`.  
 
 Special honest verifier zero knowledge property: A three round (commit,
 challenge, response) protocol for a relation :math:`R` is said to have
@@ -223,7 +217,7 @@ following design choices  :cite:p:`zkproof2022`:
 
    2. Uniform random string (public coin): If the messages produced by
       the verifier are uniform random strings, and if those messages are
-      independent of the prover’s messages, then we say that the setup
+      independent of the prover's messages, then we say that the setup
       phase employs public coins. All parties have access to an output
       of a uniform random number generator.
 
@@ -248,8 +242,8 @@ following design choices  :cite:p:`zkproof2022`:
 4. Assumptions about the underlying intractable problem: Most of the
    works in the literature using group theoretic approach allocates DLP.
 
-Metrics for Comparing ZKP Schemes
-=================================
+ZKP Performance Metrics
+=======================
 
 The efficiency of ZKP implementations can be compared based on the
 following performance metrics  :cite:p:`zkproof2022`. Here, we list the
@@ -285,7 +279,7 @@ additional performance metrics for comparing various ZKP proposals
 
 Zero-Knowledge Succinct Non-Interactive ARgument of Knowledge (zk-SNARK)
 is a non-interactive ZKP protocol initially proposed by Bitansky et
-al. in 2011. They showed that if there exist extractable
+al. in 2011. They showed that if there exist extractable
 collision-resistant hash functions (ECRHs) and an appropriate private
 information retrieval scheme, then there exist SNARKs for NP. Also in
 this work, they propose candidates for ECRH constructions. One of these
@@ -293,13 +287,13 @@ is based on the hardness of discrete logarithm problem and the two
 others are based on hard problems on lattices namely, knapsack
 (subset-sum) problems. In 2016, Groth constructed an efficient zk-SNARK
 for Quadratic Arithmetic Programs where he used bilinear groups. Zcash
-uses Groth’s construction. A downside of zk-SNARK is it uses non-public
+uses Groth's construction. A downside of zk-SNARK is it uses non-public
 randomness in its setup phase. In other words, zk-SNARK requires a
 trusted setup. Also, it is not quantum-safe. A remedy to these problem
 is zk-STARK.
 
 Scalable Transparent Zero-knowledge Argument of Knowledge (zk-STARK)
-introduced by Ben-Sasson et al. in 2018. It is an Interactive Oracle
+introduced by Ben-Sasson et al. in 2018. It is an Interactive Oracle
 Proofs (IOP) system. zk-STARK is more transparent, i.e., it needs no
 trusted set-up. zk-STARKS rely on collision-resistant hash functions.
 The zk-STARK-friendly hash function  :cite:p:`ben2020stark` :cite:p:`canteaut2020report`
@@ -308,15 +302,15 @@ it is quantum resistant. A major disadvantage of zk-STARKS is the proof
 size compared to zk-SNARKS. There are some recent works that try to
 reduce the proof length.
 
-Zk-SNARK’s algorithmic complexity for prover
+Zk-SNARK's algorithmic complexity for prover
 :math:`\mathcal{O}(C\log(C))` and verifier :math:`\mathcal{O}(1)` are
-lower compared to zk-STARK’s complexity that is
+lower compared to zk-STARK's complexity that is
 :math:`\mathcal{O}(C \text{polylog}(C))` and
 :math:`\mathcal{O}(\text{polylog}(C))`, respectively. The proof size of
 zk-SNARK is :math:`\mathcal{O}(1)` whereas it is
 :math:`\mathcal{O}(\text{polylog}(C))` for zk-STARK.
 
-Aurora  :cite:p:`ben2019aurora` is a Zk-SNARK proposed by Ben-Sasson et al. in
+Aurora  :cite:p:`ben2019aurora` is a Zk-SNARK proposed by Ben-Sasson et al. in
 2019. They developed the protocol for Rank-1 Constraint Satisfaction
 (R1CS) which is an NP-complete language. Aurora employs a public
 (transparent) setup phase. It is lightweight and quantum-safe. For the
@@ -326,8 +320,8 @@ Aurora uses an interactive oracle proof for solving univariate version
 of the sumcheck problem  :cite:p:`lund1992algebraic`.
 
 Hyrax  :cite:p:`wahby2018doubly` is another Zk-SNARK variant proposed by Wahby
-et al. in 2017. They convert an interactive proof of arithmetic circuit
-(AC) satisfiability to a ZKP scheme. Hyrax’s proofs are sublinear in
+et al. in 2017. They convert an interactive proof of arithmetic circuit
+(AC) satisfiability to a ZKP scheme. Hyrax's proofs are sublinear in
 circuit size (succinct), does not require a trusted setup phase, secure
 under the discrete log assumption.
 
@@ -487,28 +481,19 @@ attack vectors and the associated adversary models are presented in
       |           | formation |          |        |           |           |
       +-----------+-----------+----------+--------+-----------+-----------+
 
-Conclusion
-==========
-
-This report presents a comprehensive analysis of Zero-Knowledge Proof
-(ZKP) schemes, focusing on their abstract models, security requirements,
-design choices, and performance metrics. The study highlights the
+This section presents a comprehensive analysis of Zero-Knowledge Proof
+(ZKP) schemes, focusing on their software models, security requirements,
+design choices, and performance metrics. We highlight the
 fundamental principles of ZKP, distinguishing between proofs of
-membership and proofs of knowledge. It also delves into the essential
+membership and proofs of knowledge. We delve into the essential
 security properties of completeness, soundness, and zero-knowledge,
-outlining their formal definitions and practical implications.
-
-Moreover, the report categorizes ZKP schemes based on their need for a
+outlining their formal definitions and practical implications. We categorize ZKP schemes based on their need for a
 trusted setup, interaction patterns, and underlying cryptographic
 assumptions. Notable ZKP implementations such as zk-SNARKs and zk-STARKs
 are compared in terms of proof size, computational complexity, and
 security features. The analysis extends to newer protocols like Aurora
-and Bulletproof, discussing their unique advantages and limitations.
-
-The adversary model and threat analysis section provides a detailed
+and Bulletproof, discussing their unique advantages and limitations. The adversary 
+model and threat analysis part provides a detailed
 account of potential attacks and the corresponding adversarial
 capabilities, emphasizing the importance of robust security measures in
-ZKP protocols. By understanding these aspects, researchers and
-practitioners can make informed decisions about the most suitable ZKP
-schemes for their specific applications, ensuring both efficiency and
-security in cryptographic implementations.
+ZKP protocols. 
