@@ -29,7 +29,8 @@ extensions = [
     'sphinx.ext.autosummary',  # Create neat summary tables for modules/classes/methods etc
     "sphinx_autodoc_typehints",
     "sphinxcontrib.bibtex",
-    "sphinx.ext.autosectionlabel"
+    "sphinx.ext.autosectionlabel",
+    "sphinx.ext.githubpages"
 ]  
 
 
