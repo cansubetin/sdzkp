@@ -30,7 +30,8 @@ extensions = [
     "sphinx_autodoc_typehints",
     "sphinxcontrib.bibtex",
     "sphinx.ext.autosectionlabel",
-    "sphinx.ext.githubpages"
+    "sphinx.ext.githubpages",
+    "sphinx_rtd_theme",
 ]  
 
 
