@@ -1,5 +1,9 @@
-SDZKP: A zero-knowledge proof using subgroup distance problem
 =============================================================
+SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem
+=============================================================
+
+Introduction
+============
 
 Zero-knowledge proof (ZKP) systems help principals to verify the
 veracity of a piece of information without sharing the data. They are
@@ -34,10 +38,10 @@ Articles
 
 -  Cansu Betin Onur, \``Intractable Group-theoretic Problems Around
    Zero-knowledge Proofs,’’ `arXiv:2206.13350
-   [cs.CR] <https://arxiv.org/abs/2206.13350>`__
+   [cs.CR] <https://arxiv.org/abs/2206.13350>`__ :cite:p:`onur2023intractablegrouptheoreticproblemszeroknowledge`
 -  Cansu Betin Onur, \``A Zero-Knowledge Proof of Knowledge for Subgroup
    Distance Problem,’’ `arXiv:2408.00395
-   [cs.CR] <https://arxiv.org/abs/2408.00395>`__
+   [cs.CR] <https://arxiv.org/abs/2408.00395>`__ :cite:p:`onur2024zeroknowledgeproofknowledgesubgroup`
 
 Acknowledgement
 ---------------
@@ -45,8 +49,13 @@ Acknowledgement
 This work is partially supported by the NLnet foundation under the MoU
 number 2021-12-510.
 
+Installation
+============
+
+We present the details for installing SDZKP using pypi package or using the source code.
+
 Installation (Package)
-======================
+----------------------
 
 Create a project folder, in that folder preferably create a virtual
 environment:
@@ -56,7 +65,7 @@ environment:
 ``source venv/bin/activate``
 
 Prerequisites
--------------
+~~~~~~~~~~~~~
 
 SDZKP is an interactive zero-knowledge protocols and we use gRPC.
 
@@ -68,7 +77,7 @@ You can easily install the required packages by
 ``pip install -r requirements.txt``.
 
 SDZKP package
--------------
+~~~~~~~~~~~~~
 
 Install the latest SDZKP package
 
@@ -80,7 +89,7 @@ terminals (do not forget to ``source venv/bin/activate`` in both
 terminals).
 
 Installation (from source)
-==========================
+--------------------------
 
 To install sdzkp from source, checkout the latest version from
 `GitHub <https://github.com/cansubetin/sdzkp>`__ by

@@ -175,4 +175,4 @@ class Verifier:
             case _:
                 print("Error in challenge, abort")
 
-        return sdzkp_pb2.VerificationResult(sgdid=response.sgdid, roundid=response.roundid, roundresult=res, verificationresult=True)
+        return sdzkp_pb2.VerificationResult(sgdid=response.sgdid, roundid=response.roundid, roundresult=res, verificationresult=res)

@@ -63,7 +63,7 @@ A :math:`\Sigma`-protocol shown in :numref:`fig-zkparch` is a
 three move (commit :math:`a`, challenge :math:`c`, response :math:`z`)
 special honest verifier zero knowledge proof protocol which has special
 soundness :cite:p:`damgaard2002sigma`. Security requirements completeness,
-soundness and zero-knowledge properties are given in Section :ref:`requirements:Security Requirements` with their variants. A :math:`\Sigma`-protocol
+soundness and zero-knowledge properties are given in :numref:`requirements:Security Requirements` with their variants. A :math:`\Sigma`-protocol
 can be converted to a non-interactive mode by employing the Fiat-Shamir
 transformation :cite:p:`fiat1986prove`. To employ this transformation, the
 prover runs the first step and produces the commitment :math:`a`. Then,
@@ -77,7 +77,7 @@ prover produces the response in step 3.
 .. figure:: figures/zkparch.png
    :alt: The general architecture of a ZKP protocol.
 
-   The general architecture of a ZKP protocol. This scheme is called as the :math:`\Sigma`-protocol in literature :cite:p:`damgaard2002sigma`.
+   The general architecture of a ZKP protocol.
 
 Let us give a mathematical example initially presented by Tompa and
 Woll :cite:p:`tompa1987zero` :cite:p:`tompa1987random`. The set of integers between
@@ -310,7 +310,7 @@ lower compared to zk-STARK’s complexity that is
 zk-SNARK is :math:`\mathcal{O}(1)` whereas it is
 :math:`\mathcal{O}(\text{polylog}(C))` for zk-STARK.
 
-Aurora  :cite:p:`ben2019aurora`` is a Zk-SNARK proposed by Ben-Sasson et al. in
+Aurora  :cite:p:`ben2019aurora` is a Zk-SNARK proposed by Ben-Sasson et al. in
 2019. They developed the protocol for Rank-1 Constraint Satisfaction
 (R1CS) which is an NP-complete language. Aurora employs a public
 (transparent) setup phase. It is lightweight and quantum-safe. For the
@@ -319,7 +319,7 @@ the proof size to 20 times shorter than the previous Zk-SNARK proposals.
 Aurora uses an interactive oracle proof for solving univariate version
 of the sumcheck problem  :cite:p:`lund1992algebraic`.
 
-Hyrax  :cite:p:`wahby2018doubly`` is another Zk-SNARK variant proposed by Wahby
+Hyrax  :cite:p:`wahby2018doubly` is another Zk-SNARK variant proposed by Wahby
 et al. in 2017. They convert an interactive proof of arithmetic circuit
 (AC) satisfiability to a ZKP scheme. Hyrax’s proofs are sublinear in
 circuit size (succinct), does not require a trusted setup phase, secure
@@ -337,7 +337,7 @@ method inner product algorithm. It can be non-interactive using
 Fiat-Shamir heuristic. One disadvantage of Bulletproof is, it takes more
 time to verify a bulletproof than to verify a SNARK proof.
 
-Libra  :cite:p:`cryptoeprint:2019/317`` is zero-knowledge proof scheme that has
+Libra  :cite:p:`cryptoeprint:2019/317` is zero-knowledge proof scheme that has
 both optimal prover time with a succinct proof size and
 :math:`\mathcal{O}(d \log C)` verification time. Different from the
 other proposals, Libra employs a one-time setup phase that does not have
@@ -506,5 +506,3 @@ ZKP protocols. By understanding these aspects, researchers and
 practitioners can make informed decisions about the most suitable ZKP
 schemes for their specific applications, ensuring both efficiency and
 security in cryptographic implementations.
-
-.. bibliography::

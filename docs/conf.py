@@ -12,10 +12,10 @@ import sys
 sys.path.insert(0, os.path.abspath('..'))
 
 
-project = 'SDZKP: A zero-knowledge proof using subgroup distance problem'
+project = 'SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem'
 copyright = '2024, Cansu Betin Onur'
 author = 'Cansu Betin Onur'
-release = '0.0.3'
+release = '0.0.5'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

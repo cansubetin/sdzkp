@@ -7,14 +7,19 @@
 SDZKP Documentation
 ===================
 
+
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
+   :numbered: 3
    :caption: Contents:
+
+   
 
    sdzkp
    requirements
    analysis
    code
+   bibliography
 
 Indices and tables
 ==================
@@ -22,3 +27,4 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+

@@ -225,7 +225,7 @@ class SubgroupDistanceProblemWithSolution(SubgroupDistanceProblem):
         Parameters:
             max2sat_instance: An instance of the max2sat problem.
         """
-        self.max2sat_instance = max2sat_instance
+        #self.max2sat_instance = max2sat_instance
         self.p = max2sat_instance.num_variables
         self.m = self.p * 2
         self.q_original = max2sat_instance.num_clauses
@@ -270,8 +270,8 @@ class SubgroupDistanceProblemWithSolution(SubgroupDistanceProblem):
         """
         rd = SubgroupDistanceRound()                                             
         rd.t_r = self.H_WithSolution.random_binary_array()
-        rd.r, rd.t_r = self.H_WithSolution.generate_element_from_bitarray(rd.t_r)
-        rd.t_u = [a ^ b for a, b in zip(self.H_WithSolution.solution_t_h, rd.t_r)]
+        rd.r, _ = self.H_WithSolution.generate_element_from_bitarray(rd.t_r)
+        rd.t_u = [a ^ b for a, b in zip(self.solution_t_h, rd.t_r)]
         rd.U, rd.t_u = self.H_WithSolution.generate_element_from_bitarray(rd.t_u)
         rd.G = self.H_WithSolution.multiply_permutations(rd.r, self.g)
         rd.generate_random_array(self.n)

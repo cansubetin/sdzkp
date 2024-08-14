@@ -11,7 +11,7 @@ def benchmark_sgd_instance_generation(num_variables):
     sgd = SubgroupDistanceProblemWithSolution(max2satinstance)
 
 # Values of num_variables to test
-generator_sizes = range(8,128,8) #[16, 32, 64, 128, 256, 512, 1024]
+generator_sizes = range(8,64,8) #[16, 32, 64, 128, 256, 512, 1024]
 
 # Store the execution times
 execution_means = []
@@ -38,11 +38,12 @@ execution_cis = np.array(execution_cis)
 
 # Plotting the results
 plt.figure(figsize=(10, 6))
-plt.errorbar(variable_sizes, execution_means, yerr=execution_cis, fmt='o-', capsize=5, capthick=2)
-plt.title('SGD Instance Generation Execution Time with 95% Confidence Interval')
+plt.errorbar(generator_sizes, execution_means, yerr=execution_cis, fmt='o-', capsize=5, capthick=2)
+plt.title('SGD Instance Generation Time with 95% Confidence Interval')
 plt.xlabel('Number of Generators')
 plt.ylabel('Execution Time (seconds)')
 plt.grid(True)
+plt.tight_layout()
 
 # Save the figure as a PNG file
 plt.savefig('docs/figures/sgd_benchmark_with_ci.png')

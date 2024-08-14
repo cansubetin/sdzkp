@@ -3,8 +3,8 @@ Performance Analysis
 ====================
 
 
-Trusted Setup Related Tasks
-===========================
+Setup Related Tasks
+===================
 
 In this section, we present the performance evaluation results for NP problem instance generation. The subgroup distance problem (SGD) 
 relies on Max2SAT instances. We firstly create a Max2SAT instance using Motoki's algorithm. Then we convert the Max2SAT instance to SGD instance
@@ -49,6 +49,16 @@ Subgroup Distance Problem Generation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
+:numref:`fig-sgd_benchmark_with_ci`  illustrates the execution time required to generate an instance of the Subgroup 
+Distance (SGD) problem as a function of the number of generators. The plot includes error bars representing a 95% 
+confidence interval, providing insight into the variability of the timing measurements. As the number of generators 
+increases, the execution time rises significantly, showing a clear upward trend that appears to be nonlinear. This 
+indicates that the complexity of generating an SGD instance grows rapidly with the number of generators. The increasing 
+size of the confidence intervals for larger numbers of generators suggests that the variability in execution time 
+also increases with the complexity of the problem. This could be due to factors such as increased computational 
+demands and system resource allocation. Overall, the figure effectively conveys the relationship between the 
+number of generators and the time required to generate an SGD instance, while also highlighting the increasing 
+uncertainty in execution time as the problem size grows.
 
 .. _fig-sgd_benchmark_with_ci:
 
@@ -56,3 +66,76 @@ Subgroup Distance Problem Generation
    :alt:  The execution times with 95% confidence for SGD problem instance generation.
 
    The execution times with 95% confidence for SGD problem instance generation.
+
+
+
+Security Related Validation
+===========================
+A zero-knowledge protocol has to satisfy completeness, soundness and zero-knowledge properties. In this section, we 
+present the completeness and soundness validations for SDZKP. Please refer to :cite:p:`onur2024zeroknowledgeproofknowledgesubgroup`
+for the theoretic proof for zero-knowledge property. 
+
+Completeness Validation
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The benchmark code for validating the completeness of the SDZKP is designed to abort in any run if 
+any round producess a verification failure (returns False). The code runs until completion proving
+that none of the rounds are False if the prover is honest and has the solution to the subgroup 
+distance problem.
+
+.. _fig-completeness_with_ci:
+
+.. figure:: figures/completeness_with_ci.png
+   :alt:  The execution times with 95% confidence for completeness validation.
+
+   The execution times with 95% confidence for completeness validation.
+
+
+:numref:`fig-completeness_with_ci`  The figure depicts the execution time required for an honest prover to demonstrate completeness 
+in a proof system, plotted against the number of generators. The plot shows a clear upward trend, 
+indicating that as the number of generators increases, the execution time also increases significantly. 
+The relationship between the number of generators and execution time appears to be approximately 
+linear, as suggested by the straight-line pattern of the data points. The error bars, representing 
+a 95% confidence interval, provide an indication of the variability in the measurements. 
+The confidence intervals are relatively small, particularly for lower numbers of generators, 
+suggesting consistent execution times in those cases. However, as the number of generators 
+increases, the confidence intervals widen slightly, indicating a growing uncertainty or variability 
+in execution time. This could be attributed to the increasing computational complexity as the 
+problem scales. Overall, the figure effectively illustrates the impact of increasing the number 
+of generators on the time required for an honest prover to demonstrate completeness, highlighting 
+both the trend and the associated variability.
+
+
+Soundness Validation
+~~~~~~~~~~~~~~~~~~~~
+
+In this scenario, the prover is dishonest, it knows the public parameters of the SGD problem.
+The prover creates a random solution; that is, it selects a subset of generators that produces a subgroup
+element randomly. That he tries to convince the verifier that it knows the solution. In any protocol run,
+if the verifier returns a False (not verified) result in any round, then the protocol run is assumed to
+fail, otherwise the protocol run is countes as verified. The benchmark code for validating the soundness of the 
+SDZKP is designed to find the ratio of  verified (returned True) protocol runs to the total number of 
+protocol runs that we refer to as the cheating probability since the prover is dishonest.  :numref:`fig-soundness_cheating_prob` 
+shows the cheating probability for 1000 simulation runs where the number of generators is set to 8 in SGD problem. As expected,
+when the total number of rounds is 1 in a protocol run, then the cheating probability is :math:`\frac{2}{3}`. As the number of 
+rounds increases, the cheating probability decreases exponentially with probability :math:`(\frac{2}{3})^k` where k is the 
+total number of rounds in a protocol run. This trend is clearly visible in :numref:`fig-soundness_cheating_prob` . Approximately,
+after 16 rounds, the cheating probability becomes less then 0.001. 
+
+.. _fig-soundness_cheating_prob:
+
+.. figure:: figures/soundness_cheating_prob.png
+   :alt:  The cheating probability for soundness validation.
+
+   The cheating probability for soundness validation.
+
+:numref:`fig-soundness_executiontime_with_ci` shows the execution times of the protocol run as the number of rounds in a run increases.
+As expected, a larger number of rounds in a run requires a larger amount of time to accomplish the verification process.
+
+.. _fig-soundness_executiontime_with_ci:
+
+.. figure:: figures/soundness_executiontime_with_ci.png
+   :alt:  The execution times with 95% confidence for soundness validation.
+
+   The execution times with 95% confidence for soundness validation.
+
