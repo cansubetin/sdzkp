@@ -65,8 +65,6 @@ SDZKP is an interactive zero-knowledge protocols and we use gRPC.
 
 `pip install protobuf`
 
-You can easily install the required packages by
-`pip install -r requirements.txt`.
 
 ### SDZKP package
 
@@ -87,6 +85,10 @@ To install sdzkp from source, checkout the latest version from
     git clone https://github.com/cansubetin/sdzkp
     cd sdzkp
     pip install -e .
+
+You can easily install the required packages by
+`pip install -r requirements.txt`.
+
 
 If you change the gRPC proto definitions, `sdzkp/api/sdzkp.proto` then
 under root project folder, run
