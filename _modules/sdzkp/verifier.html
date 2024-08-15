@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sdzkp.verifier &mdash; SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../sdzkp.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sdzkp.html#installation">2. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../requirements.html">3. SDZKP Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis.html">4. Performance and Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../code.html">5. Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../bibliography.html">6. References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">sdzkp.verifier</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for sdzkp.verifier</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">sdzkp.sdzkproto</span> <span class="kn">import</span> <span class="n">sdzkp_pb2</span>
+<span class="kn">from</span> <span class="nn">sdzkp.sgd</span> <span class="kn">import</span> <span class="n">SubgroupDistanceProblem</span><span class="p">,</span> <span class="n">SubgroupDistanceRound</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<div class="viewcode-block" id="Verifier">
+<a class="viewcode-back" href="../../generated/sdzkp.verifier.html#sdzkp.verifier.Verifier">[docs]</a>
+<span class="k">class</span> <span class="nc">Verifier</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The Verifier class is responsible for verifying the proofs provided by the Prover in the Zero-Knowledge Proof (ZKP)</span>
+<span class="sd">    protocol for the Subgroup Distance Problem (SGD).</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        instance_id (str): A unique identifier for the problem instance.</span>
+<span class="sd">        SGD (SubgroupDistanceProblem): The instance of the Subgroup Distance Problem.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the Verifier with a given instance ID.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            instance_id (str): A unique identifier for the problem instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">instance_id</span> <span class="o">=</span> <span class="n">instance_id</span>
+
+<div class="viewcode-block" id="Verifier.handleSetup">
+<a class="viewcode-back" href="../../generated/sdzkp.verifier.html#sdzkp.verifier.Verifier.handleSetup">[docs]</a>
+    <span class="k">def</span> <span class="nf">handleSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sgdinst</span><span class="p">:</span> <span class="n">sdzkp_pb2</span><span class="o">.</span><span class="n">SGDInstance</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handles the setup phase by creating a Subgroup Distance Problem instance from the provided data.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            sgdinst (sdzkp_pb2.SGDInstance): The SGD instance received from the Prover.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            sdzkp_pb2.SetupAck: An acknowledgment message indicating whether the setup was successful.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SGD</span> <span class="o">=</span> <span class="n">SubgroupDistanceProblem</span><span class="o">.</span><span class="n">create_from_linearized_generators</span><span class="p">(</span>
+            <span class="n">sgdinst</span><span class="o">.</span><span class="n">generators</span><span class="p">,</span> <span class="n">sgdinst</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">sgdinst</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">sgdinst</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="n">sgdinst</span><span class="o">.</span><span class="n">min_distance</span>
+        <span class="p">)</span>
+        <span class="c1"># TODO: Check corner cases and return false if the problem is not accepted</span>
+        <span class="k">return</span> <span class="n">sdzkp_pb2</span><span class="o">.</span><span class="n">SetupAck</span><span class="p">(</span><span class="n">sgdid</span><span class="o">=</span><span class="n">sgdinst</span><span class="o">.</span><span class="n">sgdid</span><span class="p">,</span> <span class="n">setupresult</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Verifier.handleCommit">
+<a class="viewcode-back" href="../../generated/sdzkp.verifier.html#sdzkp.verifier.Verifier.handleCommit">[docs]</a>
+    <span class="k">def</span> <span class="nf">handleCommit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commitments</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handles the commit phase by storing the commitments and generating a challenge.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            commitments (sdzkp_pb2.Commitments): The commitments received from the Prover.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            sdzkp_pb2.Challenge: A challenge message to be sent to the Prover.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: Check whether this round is repeated or not!</span>
+        <span class="n">rd</span> <span class="o">=</span> <span class="n">SubgroupDistanceRound</span><span class="p">()</span>
+        <span class="n">rd</span><span class="o">.</span><span class="n">C1</span> <span class="o">=</span> <span class="n">commitments</span><span class="o">.</span><span class="n">C1</span>
+        <span class="n">rd</span><span class="o">.</span><span class="n">C2</span> <span class="o">=</span> <span class="n">commitments</span><span class="o">.</span><span class="n">C2</span>
+        <span class="n">rd</span><span class="o">.</span><span class="n">C3</span> <span class="o">=</span> <span class="n">commitments</span><span class="o">.</span><span class="n">C3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SGD</span><span class="o">.</span><span class="n">round_data</span><span class="p">[</span><span class="n">commitments</span><span class="o">.</span><span class="n">roundid</span><span class="p">]</span> <span class="o">=</span> <span class="n">rd</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">rd</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">c</span>
+        <span class="k">return</span> <span class="n">sdzkp_pb2</span><span class="o">.</span><span class="n">Challenge</span><span class="p">(</span><span class="n">sgdid</span><span class="o">=</span><span class="n">commitments</span><span class="o">.</span><span class="n">sgdid</span><span class="p">,</span> <span class="n">roundid</span><span class="o">=</span><span class="n">commitments</span><span class="o">.</span><span class="n">roundid</span><span class="p">,</span> <span class="n">challenge</span><span class="o">=</span><span class="n">c</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Verifier.verify_0">
+<a class="viewcode-back" href="../../generated/sdzkp.verifier.html#sdzkp.verifier.Verifier.verify_0">[docs]</a>
+    <span class="k">def</span> <span class="nf">verify_0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rd</span><span class="p">:</span> <span class="n">SubgroupDistanceRound</span><span class="p">,</span> <span class="n">Z1</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">t_u</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verifies the proof for the challenge c=0.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            rd (SubgroupDistanceRound): The round data.</span>
+<span class="sd">            Z1 (list): The Z1 value received from the Prover.</span>
+<span class="sd">            s (int): The seed used for random generation.</span>
+<span class="sd">            t_u (list): The t_u value received from the Prover.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the verification succeeds, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">retval</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">rd</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="n">rd</span><span class="o">.</span><span class="n">Z1</span> <span class="o">=</span> <span class="n">Z1</span>
+        <span class="n">rd</span><span class="o">.</span><span class="n">generate_random_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SGD</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
+
+        <span class="n">rd</span><span class="o">.</span><span class="n">U</span><span class="p">,</span> <span class="n">rd</span><span class="o">.</span><span class="n">t_u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SGD</span><span class="o">.</span><span class="n">H</span><span class="o">.</span><span class="n">generate_element_from_bitarray</span><span class="p">(</span><span class="n">t_u</span><span class="p">)</span>
+        <span class="n">Z1_minus_R</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Z1</span><span class="p">,</span> <span class="n">rd</span><span class="o">.</span><span class="n">R</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">Z1_minus_R</span> <span class="o">!=</span> <span class="n">rd</span><span class="o">.</span><span class="n">U</span><span class="p">:</span>
+            <span class="n">retval</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">expected_C1</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">generate_commitment</span><span class="p">(</span><span class="n">Z1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">rd</span><span class="o">.</span><span class="n">C1</span> <span class="o">!=</span> <span class="n">expected_C1</span><span class="p">:</span>
+                <span class="n">retval</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">expected_C3</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">generate_commitment</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">expected_C3</span> <span class="o">!=</span> <span class="n">rd</span><span class="o">.</span><span class="n">C3</span><span class="p">:</span>
+                    <span class="n">retval</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="n">retval</span></div>
+
+
+<div class="viewcode-block" id="Verifier.verify_1">
+<a class="viewcode-back" href="../../generated/sdzkp.verifier.html#sdzkp.verifier.Verifier.verify_1">[docs]</a>
+    <span class="k">def</span> <span class="nf">verify_1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rd</span><span class="p">:</span> <span class="n">SubgroupDistanceRound</span><span class="p">,</span> <span class="n">Z2</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">t_r</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verifies the proof for the challenge c=1.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            rd (SubgroupDistanceRound): The round data.</span>
+<span class="sd">            Z2 (list): The Z2 value received from the Prover.</span>
+<span class="sd">            s (int): The seed used for random generation.</span>
+<span class="sd">            t_r (list): The t_r value received from the Prover.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the verification succeeds, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">retval</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">rd</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="n">rd</span><span class="o">.</span><span class="n">Z2</span> <span class="o">=</span> <span class="n">Z2</span>
+        <span class="n">rd</span><span class="o">.</span><span class="n">generate_random_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SGD</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
+
+        <span class="n">rd</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="n">rd</span><span class="o">.</span><span class="n">t_r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SGD</span><span class="o">.</span><span class="n">H</span><span class="o">.</span><span class="n">generate_element_from_bitarray</span><span class="p">(</span><span class="n">t_r</span><span class="p">)</span>
+        <span class="n">rd</span><span class="o">.</span><span class="n">G</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SGD</span><span class="o">.</span><span class="n">H</span><span class="o">.</span><span class="n">multiply_permutations</span><span class="p">(</span><span class="n">rd</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">SGD</span><span class="o">.</span><span class="n">g</span><span class="p">)</span>
+
+        <span class="n">Z2_minus_R</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Z2</span><span class="p">,</span> <span class="n">rd</span><span class="o">.</span><span class="n">R</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">Z2_minus_R</span> <span class="o">!=</span> <span class="n">rd</span><span class="o">.</span><span class="n">G</span><span class="p">:</span>
+            <span class="n">retval</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">expected_C2</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">generate_commitment</span><span class="p">(</span><span class="n">Z2</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">rd</span><span class="o">.</span><span class="n">C2</span> <span class="o">!=</span> <span class="n">expected_C2</span><span class="p">:</span>
+                <span class="n">retval</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">expected_C3</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">generate_commitment</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">expected_C3</span> <span class="o">!=</span> <span class="n">rd</span><span class="o">.</span><span class="n">C3</span><span class="p">:</span>
+                    <span class="n">retval</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="n">retval</span></div>
+
+
+<div class="viewcode-block" id="Verifier.verify_2">
+<a class="viewcode-back" href="../../generated/sdzkp.verifier.html#sdzkp.verifier.Verifier.verify_2">[docs]</a>
+    <span class="k">def</span> <span class="nf">verify_2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rd</span><span class="p">:</span> <span class="n">SubgroupDistanceRound</span><span class="p">,</span> <span class="n">Z1</span><span class="p">,</span> <span class="n">Z2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verifies the proof for the challenge c=2.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            rd (SubgroupDistanceRound): The round data.</span>
+<span class="sd">            Z1 (list): The Z1 value received from the Prover.</span>
+<span class="sd">            Z2 (list): The Z2 value received from the Prover.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the verification succeeds, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">retval</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">Z1_minus_Z2</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Z1</span><span class="p">,</span> <span class="n">Z2</span><span class="p">)]</span>
+        <span class="n">nonzero_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">Z1_minus_Z2</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">nonzero_count</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">SGD</span><span class="o">.</span><span class="n">K</span><span class="p">:</span>
+            <span class="n">retval</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">expected_C1</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">generate_commitment</span><span class="p">(</span><span class="n">Z1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">rd</span><span class="o">.</span><span class="n">C1</span> <span class="o">!=</span> <span class="n">expected_C1</span><span class="p">:</span>
+                <span class="n">retval</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">expected_C2</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">generate_commitment</span><span class="p">(</span><span class="n">Z2</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">rd</span><span class="o">.</span><span class="n">C2</span> <span class="o">!=</span> <span class="n">expected_C2</span><span class="p">:</span>
+                    <span class="n">retval</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="n">retval</span></div>
+
+
+<div class="viewcode-block" id="Verifier.handleVerify">
+<a class="viewcode-back" href="../../generated/sdzkp.verifier.html#sdzkp.verifier.Verifier.handleVerify">[docs]</a>
+    <span class="k">def</span> <span class="nf">handleVerify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handles the verification phase by verifying the Prover&#39;s response to the challenge.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            response (sdzkp_pb2.Response): The response received from the Prover.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            sdzkp_pb2.VerificationResult: The result of the verification.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SGD</span><span class="o">.</span><span class="n">round_data</span><span class="p">[</span><span class="n">response</span><span class="o">.</span><span class="n">roundid</span><span class="p">]</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">match</span> <span class="n">rd</span><span class="o">.</span><span class="n">c</span><span class="p">:</span>
+            <span class="k">case</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">verify_0</span><span class="p">(</span><span class="n">rd</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">Z1</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">t_u</span><span class="p">)</span>
+            <span class="k">case</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">verify_1</span><span class="p">(</span><span class="n">rd</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">Z2</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">t_r</span><span class="p">)</span>
+            <span class="k">case</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">verify_2</span><span class="p">(</span><span class="n">rd</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">Z1</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">Z2</span><span class="p">)</span>
+            <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error in challenge, abort&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">sdzkp_pb2</span><span class="o">.</span><span class="n">VerificationResult</span><span class="p">(</span><span class="n">sgdid</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">sgdid</span><span class="p">,</span> <span class="n">roundid</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">roundid</span><span class="p">,</span> <span class="n">roundresult</span><span class="o">=</span><span class="n">res</span><span class="p">,</span> <span class="n">verificationresult</span><span class="o">=</span><span class="n">res</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Cansu Betin Onur.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

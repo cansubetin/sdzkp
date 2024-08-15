@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5.5. sdzkp.sgd &mdash; SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="6. References" href="../bibliography.html" />
+    <link rel="prev" title="5.4. sdzkp.verifier" href="sdzkp.verifier.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../sdzkp.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sdzkp.html#installation">2. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../requirements.html">3. SDZKP Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html">4. Performance and Security Analysis</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../code.html">5. Code Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="sdzkp.max2sat.html">5.1. sdzkp.max2sat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdzkp.elementaryabeliansubgroup.html">5.2. sdzkp.elementaryabeliansubgroup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdzkp.prover.html">5.3. sdzkp.prover</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdzkp.verifier.html">5.4. sdzkp.verifier</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5.5. sdzkp.sgd</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblem"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblem</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblem.m"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblem.m</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblem.n"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblem.n</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblem.generators_arrayform"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblem.generators_arrayform</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblem.K"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblem.K</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblem.g"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblem.g</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblem.H"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblem.H</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblem.round_data"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblem.round_data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblem.create_from_linearized_generators"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblem.create_from_linearized_generators()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblem.print_generators_arrayform"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblem.print_generators_arrayform()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblem.hamming_distance"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblem.hamming_distance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblem.linearize_generators"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblem.linearize_generators()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.p"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.p</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.m"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.m</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.q_original"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.q_original</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.clauses"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.clauses</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.K_prime"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.K_prime</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.q"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.q</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.generators"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.generators</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.generators_arrayform"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.generators_arrayform</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.generators_support"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.generators_support</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.average_support"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.average_support</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.H"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.H</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.h"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.h</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.max2sat_instance_solution"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.max2sat_instance_solution</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.solution_t_h"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.solution_t_h</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.K"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.K</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.num_transpositions_in_generators"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.num_transpositions_in_generators</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.n"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.n</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.blinder"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.blinder</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.g"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.g</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.H_WithSolution"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.H_WithSolution</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.setup_sdzkp_round"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.setup_sdzkp_round()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.convert_max2sat_solution_to_subgroupdistance_solution"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.convert_max2sat_solution_to_subgroupdistance_solution()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.create_x_for_variable_i"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.create_x_for_variable_i()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.create_y_for_variable_i_clause_j"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.create_y_for_variable_i_clause_j()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.create_y_for_variable_i"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.create_y_for_variable_i()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.reduce_to_sdp_for_variable_i"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.reduce_to_sdp_for_variable_i()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.group_triplets"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.group_triplets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.print_generators"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.print_generators()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.print_generators_arrayform"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.print_generators_arrayform()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.generate_random_3bits"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.generate_random_3bits()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.extend_generator"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.extend_generator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.add_random_3bits_to_solution_generators"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.add_random_3bits_to_solution_generators()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.extend_sdp"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.extend_sdp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.reduce_to_sdp_and_extend"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.reduce_to_sdp_and_extend()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.get_bit_i_of_generators"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.get_bit_i_of_generators()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.xor_and_check_combinations"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.xor_and_check_combinations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.test_membership"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.test_membership()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.convert_generators_to_arrayform_using_blinder"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.convert_generators_to_arrayform_using_blinder()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.convert_binary_permutation_to_arrayform_using_blinder"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.convert_binary_permutation_to_arrayform_using_blinder()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.generate_permutation_g_in_Sn"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.generate_permutation_g_in_Sn()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.generate_random_blinder"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceProblemWithSolution.generate_random_blinder()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceRound"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceRound</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceRound.s"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceRound.s</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceRound.t_r"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceRound.t_r</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceRound.r"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceRound.r</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceRound.G"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceRound.G</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceRound.t_u"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceRound.t_u</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceRound.U"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceRound.U</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceRound.R"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceRound.R</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceRound.c"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceRound.c</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceRound.round_result"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceRound.round_result</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceRound.set_seed"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceRound.set_seed()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceRound.hash"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceRound.hash()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceRound.generate_commitment"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceRound.generate_commitment()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceRound.generate_commitments"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceRound.generate_commitments()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceRound.generate_random_array"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceRound.generate_random_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceRound.generate_Z1_and_Z2"><code class="docutils literal notranslate"><span class="pre">SubgroupDistanceRound.generate_Z1_and_Z2()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../bibliography.html">6. References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../code.html"><span class="section-number">5. </span>Code Documentation</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">5.5. </span>sdzkp.sgd</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-sdzkp.sgd">
+<span id="sdzkp-sgd"></span><h1><span class="section-number">5.5. </span>sdzkp.sgd<a class="headerlink" href="#module-sdzkp.sgd" title="Link to this heading"></a></h1>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblem">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sdzkp.sgd.</span></span><span class="sig-name descname"><span class="pre">SubgroupDistanceProblem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generators</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_dist</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblem" title="Link to this definition"></a></dt>
+<dd><p>A class representing the subgroup distance problem.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblem.m">
+<span class="sig-name descname"><span class="pre">m</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblem.m" title="Link to this definition"></a></dt>
+<dd><p>The number of generators.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblem.n">
+<span class="sig-name descname"><span class="pre">n</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblem.n" title="Link to this definition"></a></dt>
+<dd><p>The size of the symmetric group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblem.generators_arrayform">
+<span class="sig-name descname"><span class="pre">generators_arrayform</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblem.generators_arrayform" title="Link to this definition"></a></dt>
+<dd><p>The generators in array form.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblem.K">
+<span class="sig-name descname"><span class="pre">K</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblem.K" title="Link to this definition"></a></dt>
+<dd><p>The minimum Hamming distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblem.g">
+<span class="sig-name descname"><span class="pre">g</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblem.g" title="Link to this definition"></a></dt>
+<dd><p>A target permutation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblem.H">
+<span class="sig-name descname"><span class="pre">H</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblem.H" title="Link to this definition"></a></dt>
+<dd><p>The elementary abelian subgroup.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="sdzkp.elementaryabeliansubgroup.html#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup" title="sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup">ElementaryAbelianSubgroup</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblem.round_data">
+<span class="sig-name descname"><span class="pre">round_data</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblem.round_data" title="Link to this definition"></a></dt>
+<dd><p>Data for each round.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Initializes a SubgroupDistanceProblem instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>generators</strong> (<em>dict</em>) – The generators in array form.</p></li>
+<li><p><strong>m</strong> (<em>int</em>) – The number of generators.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – The size of the symmetric group.</p></li>
+<li><p><strong>g</strong> (<em>list</em>) – The target permutation.</p></li>
+<li><p><strong>min_dist</strong> (<em>int</em>) – The minimum Hamming distance.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblem.create_from_linearized_generators">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_from_linearized_generators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">linearized_generators</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_dist</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblem.create_from_linearized_generators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblem.create_from_linearized_generators" title="Link to this definition"></a></dt>
+<dd><p>Creates an instance of SubgroupDistanceProblem from linearized generators.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>linearized_generators</strong> (<em>list</em>) – A list of linearized generators.</p></li>
+<li><p><strong>m</strong> (<em>int</em>) – The number of generators.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – The size of the symmetric group.</p></li>
+<li><p><strong>g</strong> (<em>list</em>) – The target permutation.</p></li>
+<li><p><strong>min_dist</strong> (<em>int</em>) – The minimum Hamming distance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An initialized instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceProblem" title="sdzkp.sgd.SubgroupDistanceProblem">SubgroupDistanceProblem</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblem.print_generators_arrayform">
+<span class="sig-name descname"><span class="pre">print_generators_arrayform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblem.print_generators_arrayform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblem.print_generators_arrayform" title="Link to this definition"></a></dt>
+<dd><p>Prints the generators in array form.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblem.hamming_distance">
+<span class="sig-name descname"><span class="pre">hamming_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblem.hamming_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblem.hamming_distance" title="Link to this definition"></a></dt>
+<dd><p>Calculates the Hamming distance between two permutations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p1</strong> (<em>list</em>) – The first permutation.</p></li>
+<li><p><strong>p2</strong> (<em>list</em>) – The second permutation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Hamming distance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblem.linearize_generators">
+<span class="sig-name descname"><span class="pre">linearize_generators</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblem.linearize_generators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblem.linearize_generators" title="Link to this definition"></a></dt>
+<dd><p>Linearizes the generators for storage or processing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of linearized generators.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sdzkp.sgd.</span></span><span class="sig-name descname"><span class="pre">SubgroupDistanceProblemWithSolution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max2sat_instance</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblemWithSolution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution" title="Link to this definition"></a></dt>
+<dd><p>A subclass of SubgroupDistanceProblem that includes a solution.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.p">
+<span class="sig-name descname"><span class="pre">p</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.p" title="Link to this definition"></a></dt>
+<dd><p>The number of variables in the max2sat instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.m">
+<span class="sig-name descname"><span class="pre">m</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.m" title="Link to this definition"></a></dt>
+<dd><p>The number of generators.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.q_original">
+<span class="sig-name descname"><span class="pre">q_original</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.q_original" title="Link to this definition"></a></dt>
+<dd><p>The number of clauses in the max2sat instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.clauses">
+<span class="sig-name descname"><span class="pre">clauses</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.clauses" title="Link to this definition"></a></dt>
+<dd><p>The max2sat clauses.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.K_prime">
+<span class="sig-name descname"><span class="pre">K_prime</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.K_prime" title="Link to this definition"></a></dt>
+<dd><p>The maximum number of satisfied clauses in the max2sat instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.q">
+<span class="sig-name descname"><span class="pre">q</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.q" title="Link to this definition"></a></dt>
+<dd><p>The number of extended clauses for the subgroup distance problem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.generators">
+<span class="sig-name descname"><span class="pre">generators</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.generators" title="Link to this definition"></a></dt>
+<dd><p>The generators in binary form.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.generators_arrayform">
+<span class="sig-name descname"><span class="pre">generators_arrayform</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.generators_arrayform" title="Link to this definition"></a></dt>
+<dd><p>The generators in array form.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.generators_support">
+<span class="sig-name descname"><span class="pre">generators_support</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.generators_support" title="Link to this definition"></a></dt>
+<dd><p>The support of each generator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.average_support">
+<span class="sig-name descname"><span class="pre">average_support</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.average_support" title="Link to this definition"></a></dt>
+<dd><p>The average support of all generators.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.H">
+<span class="sig-name descname"><span class="pre">H</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.H" title="Link to this definition"></a></dt>
+<dd><p>The elementary abelian subgroup.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="sdzkp.elementaryabeliansubgroup.html#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup" title="sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroup">ElementaryAbelianSubgroup</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.h">
+<span class="sig-name descname"><span class="pre">h</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.h" title="Link to this definition"></a></dt>
+<dd><p>The solution for the subgroup distance problem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.max2sat_instance_solution">
+<span class="sig-name descname"><span class="pre">max2sat_instance_solution</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.max2sat_instance_solution" title="Link to this definition"></a></dt>
+<dd><p>The solution to the max2sat instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.solution_t_h">
+<span class="sig-name descname"><span class="pre">solution_t_h</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.solution_t_h" title="Link to this definition"></a></dt>
+<dd><p>The solution in bit array form.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.K">
+<span class="sig-name descname"><span class="pre">K</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.K" title="Link to this definition"></a></dt>
+<dd><p>The minimum Hamming distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.num_transpositions_in_generators">
+<span class="sig-name descname"><span class="pre">num_transpositions_in_generators</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.num_transpositions_in_generators" title="Link to this definition"></a></dt>
+<dd><p>The number of transpositions in the generators.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.n">
+<span class="sig-name descname"><span class="pre">n</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.n" title="Link to this definition"></a></dt>
+<dd><p>The size of the symmetric group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.blinder">
+<span class="sig-name descname"><span class="pre">blinder</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.blinder" title="Link to this definition"></a></dt>
+<dd><p>A list used to map integers to transpositions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.g">
+<span class="sig-name descname"><span class="pre">g</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.g" title="Link to this definition"></a></dt>
+<dd><p>The permutation g in Sn.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.H_WithSolution">
+<span class="sig-name descname"><span class="pre">H_WithSolution</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.H_WithSolution" title="Link to this definition"></a></dt>
+<dd><p>The elementary abelian subgroup with the solution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="sdzkp.elementaryabeliansubgroup.html#sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroupWithSolution" title="sdzkp.elementaryabeliansubgroup.ElementaryAbelianSubgroupWithSolution">ElementaryAbelianSubgroupWithSolution</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Initializes a SubgroupDistanceProblemWithSolution instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>max2sat_instance</strong> – An instance of the max2sat problem.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.setup_sdzkp_round">
+<span class="sig-name descname"><span class="pre">setup_sdzkp_round</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">round_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblemWithSolution.setup_sdzkp_round"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.setup_sdzkp_round" title="Link to this definition"></a></dt>
+<dd><p>Sets up a round of the Subgroup Distance Zero-Knowledge Proof (SDZKP).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>round_id</strong> (<em>int</em>) – The ID of the round.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The initialized round.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#sdzkp.sgd.SubgroupDistanceRound" title="sdzkp.sgd.SubgroupDistanceRound">SubgroupDistanceRound</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.convert_max2sat_solution_to_subgroupdistance_solution">
+<span class="sig-name descname"><span class="pre">convert_max2sat_solution_to_subgroupdistance_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solution</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblemWithSolution.convert_max2sat_solution_to_subgroupdistance_solution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.convert_max2sat_solution_to_subgroupdistance_solution" title="Link to this definition"></a></dt>
+<dd><p>Converts a max2sat solution to a solution for the subgroup distance problem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>solution</strong> (<em>list</em>) – The max2sat solution.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The corresponding solution for the subgroup distance problem.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.create_x_for_variable_i">
+<span class="sig-name descname"><span class="pre">create_x_for_variable_i</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblemWithSolution.create_x_for_variable_i"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.create_x_for_variable_i" title="Link to this definition"></a></dt>
+<dd><p>Creates the x_i vector for a variable in the subgroup distance problem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>i</strong> (<em>int</em>) – The index of the variable.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The x_i vector.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.create_y_for_variable_i_clause_j">
+<span class="sig-name descname"><span class="pre">create_y_for_variable_i_clause_j</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblemWithSolution.create_y_for_variable_i_clause_j"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.create_y_for_variable_i_clause_j" title="Link to this definition"></a></dt>
+<dd><p>Creates the y_ij vector for a variable and a clause in the subgroup distance problem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong> (<em>int</em>) – The index of the variable.</p></li>
+<li><p><strong>j</strong> (<em>int</em>) – The index of the clause.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the y_ij vector for the true and false cases.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.create_y_for_variable_i">
+<span class="sig-name descname"><span class="pre">create_y_for_variable_i</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblemWithSolution.create_y_for_variable_i"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.create_y_for_variable_i" title="Link to this definition"></a></dt>
+<dd><p>Creates the y_i vector for a variable in the subgroup distance problem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>i</strong> (<em>int</em>) – The index of the variable.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the y_i vector for the true and false cases.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.reduce_to_sdp_for_variable_i">
+<span class="sig-name descname"><span class="pre">reduce_to_sdp_for_variable_i</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblemWithSolution.reduce_to_sdp_for_variable_i"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.reduce_to_sdp_for_variable_i" title="Link to this definition"></a></dt>
+<dd><p>Reduces the subgroup distance problem for a variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>i</strong> (<em>int</em>) – The index of the variable.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the true and false generators.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.group_triplets">
+<span class="sig-name descname"><span class="pre">group_triplets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblemWithSolution.group_triplets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.group_triplets" title="Link to this definition"></a></dt>
+<dd><p>Groups an array into triplets and returns them as a string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>arr</strong> (<em>list</em>) – The array to group.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A string representation of the triplets.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.print_generators">
+<span class="sig-name descname"><span class="pre">print_generators</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblemWithSolution.print_generators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.print_generators" title="Link to this definition"></a></dt>
+<dd><p>Prints the generators of the subgroup distance problem.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.print_generators_arrayform">
+<span class="sig-name descname"><span class="pre">print_generators_arrayform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblemWithSolution.print_generators_arrayform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.print_generators_arrayform" title="Link to this definition"></a></dt>
+<dd><p>Prints the generators in array form for the subgroup distance problem.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.generate_random_3bits">
+<span class="sig-name descname"><span class="pre">generate_random_3bits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">support</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblemWithSolution.generate_random_3bits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.generate_random_3bits" title="Link to this definition"></a></dt>
+<dd><p>Generates a random 3-bit vector based on the support of a generator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>support</strong> (<em>int</em>) – The support of the generator.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A 3-bit vector.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.extend_generator">
+<span class="sig-name descname"><span class="pre">extend_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_bits</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblemWithSolution.extend_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.extend_generator" title="Link to this definition"></a></dt>
+<dd><p>Extends a generator with random bits and updates its support.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong> (<em>int</em>) – The index of the generator.</p></li>
+<li><p><strong>tf</strong> (<em>str</em>) – Indicates whether the generator is “t” or “f”.</p></li>
+<li><p><strong>random_bits</strong> (<em>list</em>) – The random bits to add.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.add_random_3bits_to_solution_generators">
+<span class="sig-name descname"><span class="pre">add_random_3bits_to_solution_generators</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblemWithSolution.add_random_3bits_to_solution_generators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.add_random_3bits_to_solution_generators" title="Link to this definition"></a></dt>
+<dd><p>Adds random 3-bit vectors to the solution generators to balance the Hamming distance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.extend_sdp">
+<span class="sig-name descname"><span class="pre">extend_sdp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblemWithSolution.extend_sdp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.extend_sdp" title="Link to this definition"></a></dt>
+<dd><p>Extends the subgroup distance problem by adding random triplets to the solution generators.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.reduce_to_sdp_and_extend">
+<span class="sig-name descname"><span class="pre">reduce_to_sdp_and_extend</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblemWithSolution.reduce_to_sdp_and_extend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.reduce_to_sdp_and_extend" title="Link to this definition"></a></dt>
+<dd><p>Reduces the max2sat problem to the subgroup distance problem and extends it.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.get_bit_i_of_generators">
+<span class="sig-name descname"><span class="pre">get_bit_i_of_generators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblemWithSolution.get_bit_i_of_generators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.get_bit_i_of_generators" title="Link to this definition"></a></dt>
+<dd><p>Retrieves the i-th bit of all generators.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>i</strong> (<em>int</em>) – The bit index.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of the i-th bits of all generators.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.xor_and_check_combinations">
+<span class="sig-name descname"><span class="pre">xor_and_check_combinations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bit_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combinations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblemWithSolution.xor_and_check_combinations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.xor_and_check_combinations" title="Link to this definition"></a></dt>
+<dd><p>Performs XOR on all combinations of the bit array and checks for a match with the value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bit_array</strong> (<em>list</em>) – The array of bits.</p></li>
+<li><p><strong>value</strong> (<em>int</em>) – The value to match.</p></li>
+<li><p><strong>combinations</strong> (<em>list</em><em>, </em><em>optional</em>) – A list of combinations to check. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of correct combinations.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.test_membership">
+<span class="sig-name descname"><span class="pre">test_membership</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblemWithSolution.test_membership"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.test_membership" title="Link to this definition"></a></dt>
+<dd><p>Tests if a permutation is a member of the group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>perm</strong> (<em>list</em>) – The permutation to test.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the permutation is a member, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.convert_generators_to_arrayform_using_blinder">
+<span class="sig-name descname"><span class="pre">convert_generators_to_arrayform_using_blinder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblemWithSolution.convert_generators_to_arrayform_using_blinder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.convert_generators_to_arrayform_using_blinder" title="Link to this definition"></a></dt>
+<dd><p>Converts the binary representation of the generators to array form using a blinder.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.convert_binary_permutation_to_arrayform_using_blinder">
+<span class="sig-name descname"><span class="pre">convert_binary_permutation_to_arrayform_using_blinder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generator_v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblemWithSolution.convert_binary_permutation_to_arrayform_using_blinder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.convert_binary_permutation_to_arrayform_using_blinder" title="Link to this definition"></a></dt>
+<dd><p>Converts a binary permutation to array form using a blinder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>generator_v</strong> (<em>list</em>) – The binary permutation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The permutation in array form.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.generate_permutation_g_in_Sn">
+<span class="sig-name descname"><span class="pre">generate_permutation_g_in_Sn</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblemWithSolution.generate_permutation_g_in_Sn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.generate_permutation_g_in_Sn" title="Link to this definition"></a></dt>
+<dd><p>Generates a permutation g in Sn.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The generated permutation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceProblemWithSolution.generate_random_blinder">
+<span class="sig-name descname"><span class="pre">generate_random_blinder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceProblemWithSolution.generate_random_blinder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceProblemWithSolution.generate_random_blinder" title="Link to this definition"></a></dt>
+<dd><p>Generates a random blinder for mapping integers to transpositions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The blinder.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceRound">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sdzkp.sgd.</span></span><span class="sig-name descname"><span class="pre">SubgroupDistanceRound</span></span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceRound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceRound" title="Link to this definition"></a></dt>
+<dd><p>A class representing a single round in the SDZKP.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceRound.s">
+<span class="sig-name descname"><span class="pre">s</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceRound.s" title="Link to this definition"></a></dt>
+<dd><p>A random seed for generating randomness.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceRound.t_r">
+<span class="sig-name descname"><span class="pre">t_r</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceRound.t_r" title="Link to this definition"></a></dt>
+<dd><p>A bit array for random elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceRound.r">
+<span class="sig-name descname"><span class="pre">r</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceRound.r" title="Link to this definition"></a></dt>
+<dd><p>A randomly generated element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceRound.G">
+<span class="sig-name descname"><span class="pre">G</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceRound.G" title="Link to this definition"></a></dt>
+<dd><p>A permuted element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceRound.t_u">
+<span class="sig-name descname"><span class="pre">t_u</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceRound.t_u" title="Link to this definition"></a></dt>
+<dd><p>A bit array for another random element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceRound.U">
+<span class="sig-name descname"><span class="pre">U</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceRound.U" title="Link to this definition"></a></dt>
+<dd><p>A second permuted element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceRound.R">
+<span class="sig-name descname"><span class="pre">R</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceRound.R" title="Link to this definition"></a></dt>
+<dd><p>A random array of integers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceRound.c">
+<span class="sig-name descname"><span class="pre">c</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceRound.c" title="Link to this definition"></a></dt>
+<dd><p>A challenge bit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">C1,</span> <span class="pre">C2,</span> <span class="pre">C3</span></span></dt>
+<dd><p>Commitments generated during the round.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceRound.round_result">
+<span class="sig-name descname"><span class="pre">round_result</span></span><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceRound.round_result" title="Link to this definition"></a></dt>
+<dd><p>The result of the round.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Initializes a SubgroupDistanceRound instance.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceRound.set_seed">
+<span class="sig-name descname"><span class="pre">set_seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceRound.set_seed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceRound.set_seed" title="Link to this definition"></a></dt>
+<dd><p>Sets the random seed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>s</strong> (<em>int</em>) – The seed to set.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceRound.hash">
+<span class="sig-name descname"><span class="pre">hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceRound.hash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceRound.hash" title="Link to this definition"></a></dt>
+<dd><p>Computes the SHA3-512 hash of the given data and encodes it in base64.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – The data to hash.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The base64-encoded hash.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bytes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceRound.generate_commitment">
+<span class="sig-name descname"><span class="pre">generate_commitment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceRound.generate_commitment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceRound.generate_commitment" title="Link to this definition"></a></dt>
+<dd><p>Generates a cryptographic commitment for the given data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – The data to commit to.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The commitment (hash).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bytes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceRound.generate_commitments">
+<span class="sig-name descname"><span class="pre">generate_commitments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceRound.generate_commitments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceRound.generate_commitments" title="Link to this definition"></a></dt>
+<dd><p>Generates the commitments C1, C2, and C3 based on Z1, Z2, and the seed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceRound.generate_random_array">
+<span class="sig-name descname"><span class="pre">generate_random_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceRound.generate_random_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceRound.generate_random_array" title="Link to this definition"></a></dt>
+<dd><p>Generates a random array of integers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) – The length of the array.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sdzkp.sgd.SubgroupDistanceRound.generate_Z1_and_Z2">
+<span class="sig-name descname"><span class="pre">generate_Z1_and_Z2</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sdzkp/sgd.html#SubgroupDistanceRound.generate_Z1_and_Z2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sdzkp.sgd.SubgroupDistanceRound.generate_Z1_and_Z2" title="Link to this definition"></a></dt>
+<dd><p>Generates Z1 and Z2 as the sum of U and R, and G and R, respectively.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="sdzkp.verifier.html" class="btn btn-neutral float-left" title="5.4. sdzkp.verifier" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../bibliography.html" class="btn btn-neutral float-right" title="6. References" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Cansu Betin Onur.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

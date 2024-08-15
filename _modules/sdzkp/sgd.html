@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sdzkp.sgd &mdash; SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../sdzkp.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sdzkp.html#installation">2. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../requirements.html">3. SDZKP Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis.html">4. Performance and Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../code.html">5. Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../bibliography.html">6. References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">sdzkp.sgd</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for sdzkp.sgd</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">random</span><span class="o">,</span> <span class="nn">itertools</span><span class="o">,</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">sdzkp.elementaryabeliansubgroup</span> <span class="kn">import</span> <span class="n">ElementaryAbelianSubgroupWithSolution</span><span class="p">,</span> <span class="n">ElementaryAbelianSubgroup</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">base64</span>
+
+<div class="viewcode-block" id="SubgroupDistanceRound">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceRound">[docs]</a>
+<span class="k">class</span> <span class="nc">SubgroupDistanceRound</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class representing a single round in the SDZKP.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        s (int): A random seed for generating randomness.</span>
+<span class="sd">        t_r (list): A bit array for random elements.</span>
+<span class="sd">        r (list): A randomly generated element.</span>
+<span class="sd">        G (list): A permuted element.</span>
+<span class="sd">        t_u (list): A bit array for another random element.</span>
+<span class="sd">        U (list): A second permuted element.</span>
+<span class="sd">        R (list): A random array of integers.</span>
+<span class="sd">        c (int): A challenge bit.</span>
+<span class="sd">        C1, C2, C3 (list): Commitments generated during the round.</span>
+<span class="sd">        round_result (bool): The result of the round.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes a SubgroupDistanceRound instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t_r</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">G</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t_u</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">U</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">C1</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">C2</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">C3</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">round_result</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="SubgroupDistanceRound.set_seed">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceRound.set_seed">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the random seed.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            s (int): The seed to set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">s</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceRound.hash">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceRound.hash">[docs]</a>
+    <span class="k">def</span> <span class="nf">hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the SHA3-512 hash of the given data and encodes it in base64.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            data: The data to hash.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bytes: The base64-encoded hash.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">hashalg</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha3_512</span><span class="p">()</span>
+        <span class="n">hashalg</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+        <span class="n">digest</span> <span class="o">=</span> <span class="n">hashalg</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+        <span class="n">digest_base64</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">digest</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">digest_base64</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceRound.generate_commitment">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceRound.generate_commitment">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_commitment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a cryptographic commitment for the given data.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            data: The data to commit to.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bytes: The commitment (hash).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceRound.generate_commitments">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceRound.generate_commitments">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_commitments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates the commitments C1, C2, and C3 based on Z1, Z2, and the seed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">C1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_commitment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">C2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_commitment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">C3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_commitment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceRound.generate_random_array">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceRound.generate_random_array">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_random_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a random array of integers.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            n (int): The length of the array.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span></div>
+
+        
+<div class="viewcode-block" id="SubgroupDistanceRound.generate_Z1_and_Z2">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceRound.generate_Z1_and_Z2">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_Z1_and_Z2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates Z1 and Z2 as the sum of U and R, and G and R, respectively.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Z1</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">U</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Z2</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">G</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">)]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SubgroupDistanceProblem">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblem">[docs]</a>
+<span class="k">class</span> <span class="nc">SubgroupDistanceProblem</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class representing the subgroup distance problem.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        m (int): The number of generators.</span>
+<span class="sd">        n (int): The size of the symmetric group.</span>
+<span class="sd">        generators_arrayform (dict): The generators in array form.</span>
+<span class="sd">        K (int): The minimum Hamming distance.</span>
+<span class="sd">        g (list): A target permutation.</span>
+<span class="sd">        H (ElementaryAbelianSubgroup): The elementary abelian subgroup.</span>
+<span class="sd">        round_data (dict): Data for each round.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generators</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">min_dist</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes a SubgroupDistanceProblem instance.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            generators (dict): The generators in array form.</span>
+<span class="sd">            m (int): The number of generators.</span>
+<span class="sd">            n (int): The size of the symmetric group.</span>
+<span class="sd">            g (list): The target permutation.</span>
+<span class="sd">            min_dist (int): The minimum Hamming distance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="n">m</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generators_arrayform</span> <span class="o">=</span> <span class="n">generators</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="n">min_dist</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">g</span> <span class="o">=</span> <span class="n">g</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">=</span> <span class="n">ElementaryAbelianSubgroup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">generators_arrayform</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">round_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="SubgroupDistanceProblem.create_from_linearized_generators">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblem.create_from_linearized_generators">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_from_linearized_generators</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">linearized_generators</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">min_dist</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates an instance of SubgroupDistanceProblem from linearized generators.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            linearized_generators (list): A list of linearized generators.</span>
+<span class="sd">            m (int): The number of generators.</span>
+<span class="sd">            n (int): The size of the symmetric group.</span>
+<span class="sd">            g (list): The target permutation.</span>
+<span class="sd">            min_dist (int): The minimum Hamming distance.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            SubgroupDistanceProblem: An initialized instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">generators</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">m</span><span class="o">/</span><span class="mi">2</span><span class="p">)):</span>
+            <span class="n">generators</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;t&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">linearized_generators</span><span class="p">[(</span><span class="mi">2</span><span class="o">*</span><span class="n">i</span><span class="p">)</span><span class="o">*</span><span class="n">n</span><span class="p">:(</span><span class="mi">2</span><span class="o">*</span><span class="n">i</span><span class="p">)</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="n">n</span><span class="p">]</span>
+            <span class="n">generators</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;f&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">linearized_generators</span><span class="p">[(</span><span class="mi">2</span><span class="o">*</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">n</span><span class="p">:(</span><span class="mi">2</span><span class="o">*</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="n">n</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">generators</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">min_dist</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceProblem.print_generators_arrayform">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblem.print_generators_arrayform">[docs]</a>
+    <span class="k">def</span> <span class="nf">print_generators_arrayform</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prints the generators in array form.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;π_t_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">generators_arrayform</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;t&quot;</span><span class="p">)][</span><span class="o">-</span><span class="mi">12</span><span class="p">:])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;π_f_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">generators_arrayform</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;f&quot;</span><span class="p">)][</span><span class="o">-</span><span class="mi">12</span><span class="p">:])</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceProblem.hamming_distance">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblem.hamming_distance">[docs]</a>
+    <span class="k">def</span> <span class="nf">hamming_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the Hamming distance between two permutations.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            p1 (list): The first permutation.</span>
+<span class="sd">            p2 (list): The second permutation.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: The Hamming distance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">p2</span><span class="p">),</span> <span class="s2">&quot;Permutations must be of the same length&quot;</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="p">))</span> <span class="k">if</span> <span class="n">p1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">p2</span><span class="p">[</span><span class="n">i</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceProblem.linearize_generators">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblem.linearize_generators">[docs]</a>
+    <span class="k">def</span> <span class="nf">linearize_generators</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Linearizes the generators for storage or processing.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: A list of linearized generators.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">):</span>
+            <span class="n">arr</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generators_arrayform</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;t&quot;</span><span class="p">)])</span>
+            <span class="n">arr</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generators_arrayform</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;f&quot;</span><span class="p">)])</span>
+        <span class="k">return</span> <span class="n">arr</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SubgroupDistanceProblemWithSolution">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblemWithSolution">[docs]</a>
+<span class="k">class</span> <span class="nc">SubgroupDistanceProblemWithSolution</span><span class="p">(</span><span class="n">SubgroupDistanceProblem</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A subclass of SubgroupDistanceProblem that includes a solution.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        p (int): The number of variables in the max2sat instance.</span>
+<span class="sd">        m (int): The number of generators.</span>
+<span class="sd">        q_original (int): The number of clauses in the max2sat instance.</span>
+<span class="sd">        clauses (list): The max2sat clauses.</span>
+<span class="sd">        K_prime (int): The maximum number of satisfied clauses in the max2sat instance.</span>
+<span class="sd">        q (int): The number of extended clauses for the subgroup distance problem.</span>
+<span class="sd">        generators (dict): The generators in binary form.</span>
+<span class="sd">        generators_arrayform (dict): The generators in array form.</span>
+<span class="sd">        generators_support (dict): The support of each generator.</span>
+<span class="sd">        average_support (int): The average support of all generators.</span>
+<span class="sd">        H (ElementaryAbelianSubgroup): The elementary abelian subgroup.</span>
+<span class="sd">        h (list): The solution for the subgroup distance problem.</span>
+<span class="sd">        max2sat_instance_solution (list): The solution to the max2sat instance.</span>
+<span class="sd">        solution_t_h (list): The solution in bit array form.</span>
+<span class="sd">        K (int): The minimum Hamming distance.</span>
+<span class="sd">        num_transpositions_in_generators (int): The number of transpositions in the generators.</span>
+<span class="sd">        n (int): The size of the symmetric group.</span>
+<span class="sd">        blinder (list): A list used to map integers to transpositions.</span>
+<span class="sd">        g (list): The permutation g in Sn.</span>
+<span class="sd">        H_WithSolution (ElementaryAbelianSubgroupWithSolution): The elementary abelian subgroup with the solution.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max2sat_instance</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes a SubgroupDistanceProblemWithSolution instance.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            max2sat_instance: An instance of the max2sat problem.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#self.max2sat_instance = max2sat_instance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">max2sat_instance</span><span class="o">.</span><span class="n">num_variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_original</span> <span class="o">=</span> <span class="n">max2sat_instance</span><span class="o">.</span><span class="n">num_clauses</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clauses</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">max2sat_instance</span><span class="o">.</span><span class="n">clauses</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">K_prime</span> <span class="o">=</span> <span class="n">max2sat_instance</span><span class="o">.</span><span class="n">k</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">K_prime</span> <span class="o">+</span> <span class="mi">3</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">generators</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generators_arrayform</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generators_support</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">average_support</span> <span class="o">=</span> <span class="mi">0</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max2sat_instance_solution</span> <span class="o">=</span> <span class="n">max2sat_instance</span><span class="o">.</span><span class="n">solution</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solution_t_h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_max2sat_solution_to_subgroupdistance_solution</span><span class="p">(</span><span class="n">max2sat_instance</span><span class="o">.</span><span class="n">solution</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="mi">6</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">q_original</span> <span class="o">-</span> <span class="mi">4</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">K_prime</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reduce_to_sdp_and_extend</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_transpositions_in_generators</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_transpositions_in_generators</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blinder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_random_blinder</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">convert_generators_to_arrayform_using_blinder</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_permutation_g_in_Sn</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">H_WithSolution</span> <span class="o">=</span> <span class="n">ElementaryAbelianSubgroupWithSolution</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">generators_arrayform</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">solution_t_h</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">H_WithSolution</span><span class="o">.</span><span class="n">h</span>
+        <span class="n">check_K</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hamming_distance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">check_K</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;There is some error in extension since </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="si">}</span><span class="s2">!=</span><span class="si">{</span><span class="n">check_K</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generators_arrayform</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="SubgroupDistanceProblemWithSolution.setup_sdzkp_round">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblemWithSolution.setup_sdzkp_round">[docs]</a>
+    <span class="k">def</span> <span class="nf">setup_sdzkp_round</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">round_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets up a round of the Subgroup Distance Zero-Knowledge Proof (SDZKP).</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            round_id (int): The ID of the round.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            SubgroupDistanceRound: The initialized round.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rd</span> <span class="o">=</span> <span class="n">SubgroupDistanceRound</span><span class="p">()</span>                                             
+        <span class="n">rd</span><span class="o">.</span><span class="n">t_r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">H_WithSolution</span><span class="o">.</span><span class="n">random_binary_array</span><span class="p">()</span>
+        <span class="n">rd</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">H_WithSolution</span><span class="o">.</span><span class="n">generate_element_from_bitarray</span><span class="p">(</span><span class="n">rd</span><span class="o">.</span><span class="n">t_r</span><span class="p">)</span>
+        <span class="n">rd</span><span class="o">.</span><span class="n">t_u</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="o">^</span> <span class="n">b</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solution_t_h</span><span class="p">,</span> <span class="n">rd</span><span class="o">.</span><span class="n">t_r</span><span class="p">)]</span>
+        <span class="n">rd</span><span class="o">.</span><span class="n">U</span><span class="p">,</span> <span class="n">rd</span><span class="o">.</span><span class="n">t_u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">H_WithSolution</span><span class="o">.</span><span class="n">generate_element_from_bitarray</span><span class="p">(</span><span class="n">rd</span><span class="o">.</span><span class="n">t_u</span><span class="p">)</span>
+        <span class="n">rd</span><span class="o">.</span><span class="n">G</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">H_WithSolution</span><span class="o">.</span><span class="n">multiply_permutations</span><span class="p">(</span><span class="n">rd</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">g</span><span class="p">)</span>
+        <span class="n">rd</span><span class="o">.</span><span class="n">generate_random_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">distn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">H_WithSolution</span><span class="o">.</span><span class="n">hamming_distance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+        <span class="n">rd</span><span class="o">.</span><span class="n">generate_Z1_and_Z2</span><span class="p">()</span>
+        <span class="n">rd</span><span class="o">.</span><span class="n">generate_commitments</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">round_data</span><span class="p">[</span><span class="n">round_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">rd</span>
+        <span class="k">return</span> <span class="n">rd</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceProblemWithSolution.convert_max2sat_solution_to_subgroupdistance_solution">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblemWithSolution.convert_max2sat_solution_to_subgroupdistance_solution">[docs]</a>
+    <span class="k">def</span> <span class="nf">convert_max2sat_solution_to_subgroupdistance_solution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">solution</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts a max2sat solution to a solution for the subgroup distance problem.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            solution (list): The max2sat solution.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: The corresponding solution for the subgroup distance problem.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">solution_t_h</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">solution</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">solution</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">solution_t_h</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">solution_t_h</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">solution_t_h</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceProblemWithSolution.create_x_for_variable_i">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblemWithSolution.create_x_for_variable_i">[docs]</a>
+    <span class="k">def</span> <span class="nf">create_x_for_variable_i</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates the x_i vector for a variable in the subgroup distance problem.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            i (int): The index of the variable.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: The x_i vector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num_transposition_in_x_i</span> <span class="o">=</span> <span class="mi">3</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="o">+</span><span class="mi">3</span>
+        <span class="n">zeros</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_transposition_in_x_i</span><span class="p">)]</span>
+        <span class="n">ones</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_transposition_in_x_i</span><span class="p">)]</span>
+        <span class="n">x_i</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">x_i</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">ones</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">x_i</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">zeros</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x_i</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceProblemWithSolution.create_y_for_variable_i_clause_j">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblemWithSolution.create_y_for_variable_i_clause_j">[docs]</a>
+    <span class="k">def</span> <span class="nf">create_y_for_variable_i_clause_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates the y_ij vector for a variable and a clause in the subgroup distance problem.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            i (int): The index of the variable.</span>
+<span class="sd">            j (int): The index of the clause.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: A tuple containing the y_ij vector for the true and false cases.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">leftconst</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">rightconst</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">zerosconst</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">clause</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clauses</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="n">fret</span> <span class="o">=</span> <span class="n">zerosconst</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">tret</span> <span class="o">=</span> <span class="n">zerosconst</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">clause</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">clause</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">tret</span> <span class="o">=</span> <span class="n">leftconst</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">clause</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">clause</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">tret</span> <span class="o">=</span> <span class="n">rightconst</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">clause</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span> <span class="ow">and</span> <span class="n">clause</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">fret</span> <span class="o">=</span> <span class="n">leftconst</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">clause</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span> <span class="ow">and</span> <span class="n">clause</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">fret</span> <span class="o">=</span> <span class="n">rightconst</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">tret</span><span class="p">,</span> <span class="n">fret</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceProblemWithSolution.create_y_for_variable_i">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblemWithSolution.create_y_for_variable_i">[docs]</a>
+    <span class="k">def</span> <span class="nf">create_y_for_variable_i</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates the y_i vector for a variable in the subgroup distance problem.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            i (int): The index of the variable.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: A tuple containing the y_i vector for the true and false cases.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ty_i</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">fy_i</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_original</span><span class="p">):</span>
+            <span class="n">ty_ij</span><span class="p">,</span> <span class="n">fy_ij</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_y_for_variable_i_clause_j</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+            <span class="n">ty_i</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">ty_ij</span><span class="p">)</span>
+            <span class="n">fy_i</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">fy_ij</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ty_i</span><span class="p">,</span> <span class="n">fy_i</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceProblemWithSolution.reduce_to_sdp_for_variable_i">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblemWithSolution.reduce_to_sdp_for_variable_i">[docs]</a>
+    <span class="k">def</span> <span class="nf">reduce_to_sdp_for_variable_i</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reduces the subgroup distance problem for a variable.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            i (int): The index of the variable.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: A tuple containing the true and false generators.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tx_i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_x_for_variable_i</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">fx_i</span> <span class="o">=</span> <span class="n">tx_i</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">ty_i</span><span class="p">,</span> <span class="n">fy_i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_y_for_variable_i</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        
+        <span class="n">tpi_i</span> <span class="o">=</span> <span class="n">tx_i</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">fpi_i</span> <span class="o">=</span> <span class="n">fx_i</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">tpi_i</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">ty_i</span><span class="p">)</span>
+        <span class="n">fpi_i</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">fy_i</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">tpi_i</span><span class="p">,</span> <span class="n">fpi_i</span></div>
+
+    
+<div class="viewcode-block" id="SubgroupDistanceProblemWithSolution.group_triplets">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblemWithSolution.group_triplets">[docs]</a>
+    <span class="k">def</span> <span class="nf">group_triplets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Groups an array into triplets and returns them as a string.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            arr (list): The array to group.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: A string representation of the triplets.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">triplets</span> <span class="o">=</span> <span class="p">[</span><span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">),</span> <span class="mi">3</span><span class="p">)]</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">triplet</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span> <span class="k">for</span> <span class="n">triplet</span> <span class="ow">in</span> <span class="n">triplets</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceProblemWithSolution.print_generators">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblemWithSolution.print_generators">[docs]</a>
+    <span class="k">def</span> <span class="nf">print_generators</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prints the generators of the subgroup distance problem.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solution_t_h</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;π_t_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_triplets</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">)]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">generators_support</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">)],</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">)])</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">generators_support</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">)])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;π_f_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_triplets</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;f&quot;</span><span class="p">)]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">generators_support</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;f&quot;</span><span class="p">)],</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;f&quot;</span><span class="p">)])</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">generators_support</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;f&quot;</span><span class="p">)])</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceProblemWithSolution.print_generators_arrayform">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblemWithSolution.print_generators_arrayform">[docs]</a>
+    <span class="k">def</span> <span class="nf">print_generators_arrayform</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prints the generators in array form for the subgroup distance problem.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;π_t_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">generators_arrayform</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;t&quot;</span><span class="p">)][</span><span class="o">-</span><span class="mi">34</span><span class="p">:],</span> <span class="bp">self</span><span class="o">.</span><span class="n">generators_support</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;t&quot;</span><span class="p">)],</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;t&quot;</span><span class="p">)])</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">generators_support</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;t&quot;</span><span class="p">)])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;π_f_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">generators_arrayform</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;f&quot;</span><span class="p">)][</span><span class="o">-</span><span class="mi">34</span><span class="p">:],</span> <span class="bp">self</span><span class="o">.</span><span class="n">generators_support</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;f&quot;</span><span class="p">)],</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;f&quot;</span><span class="p">)])</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">generators_support</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;f&quot;</span><span class="p">)])</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceProblemWithSolution.generate_random_3bits">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblemWithSolution.generate_random_3bits">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_random_3bits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">support</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a random 3-bit vector based on the support of a generator.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            support (int): The support of the generator.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: A 3-bit vector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">perms_of_large_number_of_0s</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="p">]</span>
+        <span class="n">perms_of_large_number_of_1s</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="n">support</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">average_support</span><span class="p">:</span>
+            <span class="n">perms</span> <span class="o">=</span> <span class="n">perms_of_large_number_of_1s</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">perms</span> <span class="o">=</span> <span class="n">perms_of_large_number_of_0s</span>
+        <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">perms</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceProblemWithSolution.extend_generator">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblemWithSolution.extend_generator">[docs]</a>
+    <span class="k">def</span> <span class="nf">extend_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">random_bits</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extends a generator with random bits and updates its support.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            i (int): The index of the generator.</span>
+<span class="sd">            tf (str): Indicates whether the generator is &quot;t&quot; or &quot;f&quot;.</span>
+<span class="sd">            random_bits (list): The random bits to add.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">tf</span><span class="p">)]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">random_bits</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generators_support</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">tf</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">tf</span><span class="p">)])</span>
+        
+        <span class="n">vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generators_support</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">average_support</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceProblemWithSolution.add_random_3bits_to_solution_generators">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblemWithSolution.add_random_3bits_to_solution_generators">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_random_3bits_to_solution_generators</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds random 3-bit vectors to the solution generators to balance the Hamming distance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sum_bits</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">sum_bits_nonsolution</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">random_bits_solution</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">random_bits_nonsolution</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">selectedsolution</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">selectedsolution</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max2sat_instance_solution</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">random_bits_solution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_random_3bits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generators_support</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">)])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">extend_generator</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="n">random_bits_solution</span><span class="p">)</span>
+                <span class="n">random_bits_nonsolution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_random_3bits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generators_support</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;f&quot;</span><span class="p">)])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">extend_generator</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;f&quot;</span><span class="p">,</span> <span class="n">random_bits_nonsolution</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">random_bits_solution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_random_3bits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generators_support</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;f&quot;</span><span class="p">)])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">extend_generator</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;f&quot;</span><span class="p">,</span> <span class="n">random_bits_solution</span><span class="p">)</span>
+                <span class="n">random_bits_nonsolution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_random_3bits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generators_support</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">)])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">extend_generator</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="n">random_bits_nonsolution</span><span class="p">)</span>
+            <span class="n">sum_bits</span> <span class="o">=</span> <span class="p">[(</span><span class="n">sum_bits</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^</span> <span class="n">random_bits_solution</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+            <span class="n">sum_bits_nonsolution</span> <span class="o">=</span> <span class="p">[(</span><span class="n">sum_bits_nonsolution</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^</span> <span class="n">random_bits_nonsolution</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+
+        <span class="n">required_bits_solution</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sum_bits</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+        <span class="n">required_bits_nonsolution</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">^</span> <span class="n">sum_bits_nonsolution</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max2sat_instance_solution</span><span class="p">[</span><span class="n">selectedsolution</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extend_generator</span><span class="p">(</span><span class="n">selectedsolution</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="n">required_bits_solution</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extend_generator</span><span class="p">(</span><span class="n">selectedsolution</span><span class="p">,</span> <span class="s2">&quot;f&quot;</span><span class="p">,</span> <span class="n">required_bits_nonsolution</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extend_generator</span><span class="p">(</span><span class="n">selectedsolution</span><span class="p">,</span> <span class="s2">&quot;f&quot;</span><span class="p">,</span> <span class="n">required_bits_solution</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extend_generator</span><span class="p">(</span><span class="n">selectedsolution</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="n">required_bits_nonsolution</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceProblemWithSolution.extend_sdp">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblemWithSolution.extend_sdp">[docs]</a>
+    <span class="k">def</span> <span class="nf">extend_sdp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extends the subgroup distance problem by adding random triplets to the solution generators.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_random_3bits_to_solution_generators</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="SubgroupDistanceProblemWithSolution.reduce_to_sdp_and_extend">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblemWithSolution.reduce_to_sdp_and_extend">[docs]</a>
+    <span class="k">def</span> <span class="nf">reduce_to_sdp_and_extend</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reduces the max2sat problem to the subgroup distance problem and extends it.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">):</span>
+            <span class="n">tpi_i</span><span class="p">,</span> <span class="n">fpi_i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduce_to_sdp_for_variable_i</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">tpi_i</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;f&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">fpi_i</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generators_support</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">tpi_i</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generators_support</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;f&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">fpi_i</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_original</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extend_sdp</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="SubgroupDistanceProblemWithSolution.get_bit_i_of_generators">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblemWithSolution.get_bit_i_of_generators">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_bit_i_of_generators</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the i-th bit of all generators.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            i (int): The bit index.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: A list of the i-th bits of all generators.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bit_array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">):</span>
+            <span class="n">bit_array</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">bit_array</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="s2">&quot;f&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">bit_array</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceProblemWithSolution.xor_and_check_combinations">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblemWithSolution.xor_and_check_combinations">[docs]</a>
+    <span class="k">def</span> <span class="nf">xor_and_check_combinations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bit_array</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">combinations</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs XOR on all combinations of the bit array and checks for a match with the value.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            bit_array (list): The array of bits.</span>
+<span class="sd">            value (int): The value to match.</span>
+<span class="sd">            combinations (list, optional): A list of combinations to check. Defaults to None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: A list of correct combinations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bit_array</span><span class="p">)</span>
+        <span class="n">all_combinations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">correct_combinations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">combinations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">combinations</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">r</span><span class="p">))</span>
+                <span class="n">all_combinations</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">combinations</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">all_combinations</span> <span class="o">=</span> <span class="n">combinations</span>
+
+        <span class="k">for</span> <span class="n">combination</span> <span class="ow">in</span> <span class="n">all_combinations</span><span class="p">:</span>
+            <span class="n">xor_result</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">combination</span><span class="p">:</span>
+                <span class="n">xor_result</span> <span class="o">^=</span> <span class="n">bit_array</span><span class="p">[</span><span class="n">num</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="n">xor_result</span><span class="p">:</span>
+                <span class="n">correct_combinations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">combination</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">correct_combinations</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceProblemWithSolution.test_membership">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblemWithSolution.test_membership">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_membership</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">perm</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tests if a permutation is a member of the group.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            perm (list): The permutation to test.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the permutation is a member, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">perm</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">bit_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bit_i_of_generators</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">correct_combinations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xor_and_check_combinations</span><span class="p">(</span><span class="n">bit_array</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">perm</span><span class="p">)):</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">perm</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">bit_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bit_i_of_generators</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">correct_combinations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xor_and_check_combinations</span><span class="p">(</span><span class="n">bit_array</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">combinations</span><span class="o">=</span><span class="n">correct_combinations</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">correct_combinations</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">correct_combinations</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceProblemWithSolution.convert_generators_to_arrayform_using_blinder">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblemWithSolution.convert_generators_to_arrayform_using_blinder">[docs]</a>
+    <span class="k">def</span> <span class="nf">convert_generators_to_arrayform_using_blinder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts the binary representation of the generators to array form using a blinder.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">):</span>
+            <span class="n">generator_arrayform_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_binary_permutation_to_arrayform_using_blinder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">)])</span>     
+            <span class="n">generator_arrayform_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_binary_permutation_to_arrayform_using_blinder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;f&quot;</span><span class="p">)])</span>     
+            <span class="bp">self</span><span class="o">.</span><span class="n">generators_arrayform</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">generator_arrayform_t</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generators_arrayform</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;f&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">generator_arrayform_f</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceProblemWithSolution.convert_binary_permutation_to_arrayform_using_blinder">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblemWithSolution.convert_binary_permutation_to_arrayform_using_blinder">[docs]</a>
+    <span class="k">def</span> <span class="nf">convert_binary_permutation_to_arrayform_using_blinder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generator_v</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts a binary permutation to array form using a blinder.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            generator_v (list): The binary permutation.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: The permutation in array form.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">generator_arrayform</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">generator_v</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">generator_arrayform</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">blinder</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">idx</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">blinder</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">generator_arrayform</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">blinder</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">blinder</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">idx</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">generator_arrayform</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">blinder</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">idx</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">blinder</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">idx</span><span class="p">]</span>
+                <span class="n">generator_arrayform</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">blinder</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">blinder</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">generator_arrayform</span></div>
+
+    
+<div class="viewcode-block" id="SubgroupDistanceProblemWithSolution.generate_permutation_g_in_Sn">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblemWithSolution.generate_permutation_g_in_Sn">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_permutation_g_in_Sn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a permutation g in Sn.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: The generated permutation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ones</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_binary_permutation_to_arrayform_using_blinder</span><span class="p">(</span><span class="n">ones</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">g</span></div>
+
+
+<div class="viewcode-block" id="SubgroupDistanceProblemWithSolution.generate_random_blinder">
+<a class="viewcode-back" href="../../generated/sdzkp.sgd.html#sdzkp.sgd.SubgroupDistanceProblemWithSolution.generate_random_blinder">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_random_blinder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>       
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a random blinder for mapping integers to transpositions.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: The blinder.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">blinder</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">))</span>
+        <span class="c1"># Shuffle the list of integers to randomize their order</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">blinder</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">blinder</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Cansu Betin Onur.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

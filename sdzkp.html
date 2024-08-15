@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1. Introduction &mdash; SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=01f34227"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="3. SDZKP Specification" href="requirements.html" />
+    <link rel="prev" title="SDZKP Documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1. Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#articles">1.1. Articles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#acknowledgement">1.2. Acknowledgement</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#installation">2. Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation-package">2.1. Installation (Package)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prerequisites">2.1.1. Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sdzkp-package">2.1.2. SDZKP package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#installation-from-source">2.2. Installation (from source)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">3. SDZKP Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html">4. Performance and Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code.html">5. Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bibliography.html">6. References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">1. </span>Introduction</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="introduction">
+<h1><span class="section-number">1. </span>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h1>
+<p>Zero-knowledge proof (ZKP) systems help principals to verify the
+veracity of a piece of information without sharing the data. They are
+widely used to preserve confidentiality and ownership of data. ZKP can
+be seen as a reusable building block for making the future internet
+trustworthy and secure. In this project (0KNOW) we aimed to develop a
+lightweight group-theoretic zero-knowledge proof system that can be
+employed as a cryptographic primitive in many security protocols such as
+identification, authentication, or credential ownership.</p>
+<p>In 0KNOW, we have studied NP group-theoretic problems and selected the
+search version of the subgroup distance problem within the Hamming
+metric. Breifly, for given distance <span class="math notranslate nohighlight">\(k\)</span>, given element <span class="math notranslate nohighlight">\(g\)</span>,
+given subgroup H from the symmeric group of degree <span class="math notranslate nohighlight">\(n\)</span>
+(<span class="math notranslate nohighlight">\(S_n\)</span>), problem asks to find an element h from the subgroup H
+which is at most <span class="math notranslate nohighlight">\(k\)</span> distance from <span class="math notranslate nohighlight">\(g\)</span>. Our choice as
+platform subgroup is an elementary abelian subgroup. We have designed a
+novel black-box 3-round statistical zero knowledge proof of knowledge
+protocol called the Subgroup Distance Zero Knowledge Proof (SDZKP). It
+can be seen as a Stern-type protocol. It has 3-special-soundness
+property which assures knowledge soundness with error
+<span class="math notranslate nohighlight">\(\frac{2}{3}\)</span>.</p>
+<p>All in all, we present a new zero-knowledge identification scheme rooted
+in the complexity of the subgroup distance problem within the Hamming
+metric. SDZKP incorporates a cryptographically secure pseudorandom
+number generator to obscure secrets and employs a Stern-type algorithm
+to ensure strong security features.</p>
+<section id="articles">
+<h2><span class="section-number">1.1. </span>Articles<a class="headerlink" href="#articles" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Cansu Betin Onur, ``Intractable Group-theoretic Problems Around
+Zero-knowledge Proofs,’’ <a class="reference external" href="https://arxiv.org/abs/2206.13350">arXiv:2206.13350
+[cs.CR]</a>
+<span id="id1">[<a class="reference internal" href="bibliography.html#id3" title="Cansu Betin Onur. Intractable group-theoretic problems around zero-knowledge proofs. 2023. URL: https://arxiv.org/abs/2206.13350, arXiv:2206.13350.">Onu23</a>]</span></p></li>
+<li><p>Cansu Betin Onur, ``A Zero-Knowledge Proof of Knowledge for Subgroup
+Distance Problem,’’ <a class="reference external" href="https://arxiv.org/abs/2408.00395">arXiv:2408.00395
+[cs.CR]</a>
+<span id="id2">[<a class="reference internal" href="bibliography.html#id2" title="Cansu Betin Onur. A zero-knowledge proof of knowledge for subgroup distance problem. 2024. URL: https://arxiv.org/abs/2408.00395, arXiv:2408.00395.">Onu24</a>]</span></p></li>
+</ul>
+</section>
+<section id="acknowledgement">
+<h2><span class="section-number">1.2. </span>Acknowledgement<a class="headerlink" href="#acknowledgement" title="Link to this heading"></a></h2>
+<p>This work is partially supported by the NLnet foundation under the MoU
+number 2021-12-510.</p>
+</section>
+</section>
+<section id="installation">
+<h1><span class="section-number">2. </span>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
+<p>We present the details for installing SDZKP using pypi package or using
+the source code.</p>
+<section id="installation-package">
+<h2><span class="section-number">2.1. </span>Installation (Package)<a class="headerlink" href="#installation-package" title="Link to this heading"></a></h2>
+<p>Create a project folder, in that folder preferably create a virtual
+environment:</p>
+<p><code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">-m</span> <span class="pre">venv</span> <span class="pre">venv</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">venv/bin/activate</span></code></p>
+<section id="prerequisites">
+<h3><span class="section-number">2.1.1. </span>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h3>
+<p>SDZKP is an interactive zero-knowledge protocols and we use gRPC.</p>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">grpcio</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">protobuf</span></code></p>
+</section>
+<section id="sdzkp-package">
+<h3><span class="section-number">2.1.2. </span>SDZKP package<a class="headerlink" href="#sdzkp-package" title="Link to this heading"></a></h3>
+<p>Install the latest SDZKP package</p>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">sdzkp</span></code></p>
+<p>You can then copy sdzkp_verifier.py and sdzkp_prover.py from
+<a class="reference external" href="https://github.com/cansubetin/sdzkp">GitHub</a> and run them in two
+terminals (do not forget to <code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">venv/bin/activate</span></code> in both
+terminals).</p>
+</section>
+</section>
+<section id="installation-from-source">
+<h2><span class="section-number">2.2. </span>Installation (from source)<a class="headerlink" href="#installation-from-source" title="Link to this heading"></a></h2>
+<p>To install sdzkp from source, checkout the latest version from
+<a class="reference external" href="https://github.com/cansubetin/sdzkp">GitHub</a> by</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">cansubetin</span><span class="o">/</span><span class="n">sdzkp</span>
+<span class="n">cd</span> <span class="n">sdzkp</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
+</pre></div>
+</div>
+<p>You can easily install the required packages by
+<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements.txt</span></code>.</p>
+<p>If you change the gRPC proto definitions, <code class="docutils literal notranslate"><span class="pre">sdzkp/api/sdzkp.proto</span></code> then
+under root project folder, run</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">grpcio</span><span class="o">-</span><span class="n">tools</span>
+<span class="o">./</span><span class="n">compile_api</span><span class="o">.</span><span class="n">sh</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="SDZKP Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="requirements.html" class="btn btn-neutral float-right" title="3. SDZKP Specification" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Cansu Betin Onur.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

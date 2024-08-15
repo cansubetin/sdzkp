@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3. SDZKP Specification &mdash; SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=01f34227"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="4. Performance and Security Analysis" href="analysis.html" />
+    <link rel="prev" title="1. Introduction" href="sdzkp.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="sdzkp.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sdzkp.html#installation">2. Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. SDZKP Specification</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#software-design-model">3.1. Software Design Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#software-top-level-design">3.2. Software Top-level Design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#security-requirements">3.3. Security Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#zkp-performance-metrics">3.4. ZKP Performance Metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adversary-model-and-threat-analysis">3.5. Adversary Model and Threat Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html">4. Performance and Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code.html">5. Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bibliography.html">6. References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SDZKP: A Zero-knowledge Proof using Subgroup Distance Problem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">3. </span>SDZKP Specification</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="sdzkp-specification">
+<h1><span class="section-number">3. </span>SDZKP Specification<a class="headerlink" href="#sdzkp-specification" title="Link to this heading"></a></h1>
+<p>In this section, we present the software design model of zero-knowledge proof
+(ZKP) schemes, the security requirements, performance
+metrics, adversary model and threat analysis. We highlight the
+fundamental principles of ZKP, distinguishing between proofs of
+membership and proofs of knowledge. We delve into the essential
+security properties of completeness, soundness, and zero-knowledge,
+outlining their formal definitions and practical implications.</p>
+<section id="software-design-model">
+<h2><span class="section-number">3.1. </span>Software Design Model<a class="headerlink" href="#software-design-model" title="Link to this heading"></a></h2>
+<p>In a ZKP scheme, the statements (claims) are formally represented as a
+relation <span class="math notranslate nohighlight">\(R\)</span> between instances denoted as <span class="math notranslate nohighlight">\(x\)</span> and witnesses
+represented as <span class="math notranslate nohighlight">\(w\)</span>. <span class="math notranslate nohighlight">\(R\)</span> defines the acceptable <span class="math notranslate nohighlight">\((x,w)\)</span>
+pairs; i.e., <span class="math notranslate nohighlight">\(R\)</span> consists of the pairs <span class="math notranslate nohighlight">\((x,w)\)</span>. Then, the
+language <span class="math notranslate nohighlight">\(L\)</span> defines <span class="math notranslate nohighlight">\(x\)</span> that have an associated
+<span class="math notranslate nohighlight">\(w \in R\)</span>; i.e.,
+<span class="math notranslate nohighlight">\(L=\{  x | \ (x,w)\in R \text{ for some } w   \}\)</span>. Here, <span class="math notranslate nohighlight">\(L\)</span>
+is the set of instances induced by <span class="math notranslate nohighlight">\(R.\)</span> An instance is a commonly
+known input in an interactive proof scheme and a witness is a private
+information known by the prover. A membership claim can then be defined
+in the form of <span class="math notranslate nohighlight">\(x \in L\)</span> and a knowledge claim can be defined in
+the statement form of “Considering <span class="math notranslate nohighlight">\(R\)</span>, I know the witness
+<span class="math notranslate nohighlight">\(w\)</span> associated with the instance <span class="math notranslate nohighlight">\(x\)</span>.” In both types, the
+statements can be represented as software pieces or Boolean/Arithmetic
+circuits consisting of input nodes, output nodes and computation gates.
+The literature considers mostly the depth of the circuit <span class="math notranslate nohighlight">\(d\)</span>, or
+circuit size <span class="math notranslate nohighlight">\(C\)</span> (i.e., the number of gates in the circuit) or the
+size of the input given to the circuit <span class="math notranslate nohighlight">\(n=|x|\)</span> where
+<span class="math notranslate nohighlight">\(x \in L.\)</span></p>
+<p>A zero-knowledge proof facilitates proving that a statement is true
+while preserving some secret (and privacy-sensitive) information. The
+claims about privacy-sensitive data can be defined as statements. For
+instance, the claim, “I am older than 18 years old” is a <strong>statement</strong>
+that is to be proven. An identity card (e.g., TCKK) is an <strong>instance</strong>
+of this statement. The birth date and personal information of the person
+signed by the government is the <strong>witness</strong> of this instance. A general
+claim (statement) is substantiated by the instance. The association
+between the instance and the secret information (or private information
+such as the actual age in this example) is called the witness. Claim
+(statement) and sometimes the instances are known to both of the
+principals (parties taking part in a protocol).</p>
+<p>Zero knowledge proof schemes are seen in two types. A proof to assure
+that a statement is true or a proof of knowledge of an hidden
+information. The principals in a ZKP scheme are the prover (Alice or
+<span class="math notranslate nohighlight">\(P\)</span>) and the verifier (Bob or <span class="math notranslate nohighlight">\(V\)</span>) as shown in
+<a class="reference internal" href="#fig-zkparch"><span class="std std-numref">Fig. 3.1</span></a> that depicts the overall architecture of a
+ZKP scheme. In an abstract ZKP scheme as shown in
+<a class="reference internal" href="#fig-zkparch"><span class="std std-numref">Fig. 3.1</span></a> , the prover generates a proof of the
+statement and send it to the verifier. This step is called as the commit
+(<span class="math notranslate nohighlight">\(a\)</span>, witness) phase. Subsequently, the verifier challenges the
+prover by posing some questions such as sending a binary sequence back
+to the prover; this phase is called as the challenge (<span class="math notranslate nohighlight">\(c\)</span>) phase.
+The prover prepares adequate response to the challenge and send it to
+the verifier (response, <span class="math notranslate nohighlight">\(z\)</span> phase). Finally the verifier accepts
+or rejects the claim without being able to reveal any confidential
+information.</p>
+<p>A <span class="math notranslate nohighlight">\(\Sigma\)</span>-protocol shown in <a class="reference internal" href="#fig-zkparch"><span class="std std-numref">Fig. 3.1</span></a> is a
+three move (commit <span class="math notranslate nohighlight">\(a\)</span>, challenge <span class="math notranslate nohighlight">\(c\)</span>, response <span class="math notranslate nohighlight">\(z\)</span>)
+special honest verifier zero knowledge proof protocol which has special
+soundness <span id="id1">[<a class="reference internal" href="bibliography.html#id17" title="Ivan Damgard. On sigma protocols. Lecture Notes, University of Aarhus, Department for Computer Science, 2002.">Dam02</a>]</span>. Security requirements completeness,
+soundness and zero-knowledge properties are given in <a class="reference internal" href="#security-requirements"><span class="std std-numref">Section 3.3</span></a> with their variants. A <span class="math notranslate nohighlight">\(\Sigma\)</span>-protocol
+can be converted to a non-interactive mode by employing the Fiat-Shamir
+transformation <span id="id2">[<a class="reference internal" href="bibliography.html#id159" title="Amos Fiat and Adi Shamir. How to prove yourself: practical solutions to identification and signature problems. In Conference on the theory and application of cryptographic techniques, 186–194. Springer, 1986.">FS86</a>]</span>. To employ this transformation, the
+prover runs the first step and produces the commitment <span class="math notranslate nohighlight">\(a\)</span>. Then,
+instead of expecting a challenge from the verifier, the prover computes
+a (random) challenge by using a random oracle that accepts <span class="math notranslate nohighlight">\(a\)</span> and
+the statement circuit (<span class="math notranslate nohighlight">\(x\)</span>) as input. Using this challenge, the
+prover produces the response in step 3.</p>
+<figure class="align-default" id="id30">
+<span id="fig-zkparch"></span><img alt="The general architecture of a ZKP protocol." src="_images/zkparch.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 3.1 </span><span class="caption-text">The general architecture of a ZKP protocol.</span><a class="headerlink" href="#id30" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Let us give a mathematical example initially presented by Tompa and
+Woll <span id="id3">[<a class="reference internal" href="bibliography.html#id24" title="Martin A Tompa. Zero knowledge interactive proofs of knowledge. In Proceedings of the Second Conference on Theoretical Aspects of Reasoning About Knowledge, 1–12. 1987.">Tom87</a>]</span> <span id="id4">[<a class="reference internal" href="bibliography.html#id25" title="Martin Tompa and Heather Woll. Random self-reducibility and zero knowledge interactive proofs of possession of information. In 28th Annual Symposium on Foundations of Computer Science, 472–482. IEEE, 1987.">TW87</a>]</span>. The set of integers between
+<span class="math notranslate nohighlight">\(1\)</span> and <span class="math notranslate nohighlight">\(n\)</span> that are relatively prime with <span class="math notranslate nohighlight">\(n\)</span> is
+denoted by <span class="math notranslate nohighlight">\(Z_n^*.\)</span> A number <span class="math notranslate nohighlight">\(a \in  Z_n^*\)</span> is said to be a
+quadratic residue mod <span class="math notranslate nohighlight">\(n\)</span> if there exits <span class="math notranslate nohighlight">\(x \in  Z_n^*\)</span> such
+that <span class="math notranslate nohighlight">\(a=x^2.\)</span> Say <span class="math notranslate nohighlight">\(n=q_1q_2\)</span> for distinct primes <span class="math notranslate nohighlight">\(q_1\)</span>
+and <span class="math notranslate nohighlight">\(q_2.\)</span> If the factorization of <span class="math notranslate nohighlight">\(n\)</span> is not known, then
+the problem whether <span class="math notranslate nohighlight">\(a\)</span> is a quadratic residue modulo <span class="math notranslate nohighlight">\(n\)</span> is
+known to be computationally hard. Alice wants to prove that she knows an
+element <span class="math notranslate nohighlight">\(c \in  Z_n^*\)</span> such that <span class="math notranslate nohighlight">\(a=c^2.\)</span> Then, the steps of
+the ZKP scheme are:</p>
+<p>Step 1 (commit phase): Alice (prover, <span class="math notranslate nohighlight">\(P\)</span>) chooses a random
+element <span class="math notranslate nohighlight">\(k \in  Z_n^*\)</span> and computes <span class="math notranslate nohighlight">\(K=k^2\)</span> mod <span class="math notranslate nohighlight">\(n.\)</span>
+She sends <span class="math notranslate nohighlight">\(K\)</span> to Bob (verifier, <span class="math notranslate nohighlight">\(V\)</span>).</p>
+<p>Step 2 (challenge phase): Bob chooses <span class="math notranslate nohighlight">\(b \in    \{0,1 \}\)</span> uniform
+randomly and sends it to Alice.</p>
+<p>Step 3 (response phase): Alice computes <span class="math notranslate nohighlight">\(C=c^bk\)</span> and sends it to
+Bob.</p>
+<p>Step 4 (verification): Bob verifies <span class="math notranslate nohighlight">\(C^2=a^bK\)</span> mod <span class="math notranslate nohighlight">\(n.\)</span></p>
+<p>This protocol should be repeated sufficiently many times. If it is
+applied only once, Alice can cheat Bob with probability at most
+<span class="math notranslate nohighlight">\(\frac{1}{2} .\)</span> If it is repeated <span class="math notranslate nohighlight">\(m\)</span> times, then this
+probability is reduced to <span class="math notranslate nohighlight">\(\frac{1}{2^m} .\)</span></p>
+<p>SDZKP is a three move Stern-type zero-knowledge proof scheme similar to the architecture
+shown in <a class="reference internal" href="#fig-zkparch"><span class="std std-numref">Fig. 3.1</span></a>. The details of the design decisions regarding the implementation
+of the protocol can be found in <span id="id5">[<a class="reference internal" href="bibliography.html#id2" title="Cansu Betin Onur. A zero-knowledge proof of knowledge for subgroup distance problem. 2024. URL: https://arxiv.org/abs/2408.00395, arXiv:2408.00395.">Onu24</a>]</span>.</p>
+</section>
+<section id="software-top-level-design">
+<h2><span class="section-number">3.2. </span>Software Top-level Design<a class="headerlink" href="#software-top-level-design" title="Link to this heading"></a></h2>
+<p>The SDZKP software system is a comprehensive Python implementation designed to facilitate a zero-knowledge proof (ZKP)
+protocol based on the subgroup distance problem within the Hamming metric. This software enables a secure,
+privacy-preserving communication mechanism between a Prover and a Verifier, which is essential in cryptographic
+applications where confidentiality and integrity are paramount. The system’s core functionality revolves
+around a 3-round ZKP protocol, where the Prover generates a proof based on the input parameters related
+to the subgroup distance problem, and the Verifier validates this proof without revealing any underlying
+information. This ensures that the process adheres to the principles of statistical zero-knowledge,
+meaning that no information about the Prover’s input (the witness) is leaked during the verification process.
+The soundness error of the protocol is deliberately set at 2/3, aligning with the theoretical underpinnings
+of zero-knowledge proofs in cryptographic research.</p>
+<p>The architecture of the SDZKP system is divided into three primary modules: the Prover, the Verifier, and
+the gRPC Communication module. The Prover module is responsible for handling input parameters, generating
+the proof, and sending this proof to the Verifier via a secure gRPC interface. The Verifier module,
+on the other hand, receives the proof and performs a rigorous verification process to ensure the
+proof’s validity, again utilizing gRPC for secure communication. The gRPC Communication module plays
+a crucial role in maintaining the integrity and confidentiality of the data exchanged between the
+Prover and Verifier, ensuring that all transmissions are encrypted and secure.</p>
+<p>In terms of non-functional requirements, the SDZKP system is designed with performance, scalability,
+and security in mind. The proof generation and verification processes are optimized for efficiency,
+minimizing latency in communication to ensure a smooth user experience. The system is also scalable,
+capable of handling larger instances of the subgroup distance problem without significant degradation
+in performance. Security is a fundamental aspect of the system, with rigorous measures in place
+to uphold the zero-knowledge property, ensuring that the process remains secure and that no
+unintended information is leaked.</p>
+<p>The SDZKP project is built using Python, and all dependencies are managed via a <cite>requirements.txt</cite> file,
+ensuring easy setup and installation. The system is compatible with major operating systems that
+support Python, including Linux, macOS, and Windows. The project also includes comprehensive testing
+requirements, with unit tests developed for key functions within the Prover and Verifier components,
+as well as integration tests to ensure that the communication between these components is correctly
+implemented and secure. Additionally, security tests are performed to validate that the system
+adheres to the zero-knowledge principles.</p>
+<p>Maintenance of the SDZKP system is facilitated through GitHub’s issue tracking feature, which allows
+for efficient management of bugs, feature requests, and other project-related tasks. Continuous
+integration and deployment (CI/CD) pipelines are also implemented, automating the testing and
+deployment processes to ensure that the system remains up-to-date and functional as new updates
+are made. Overall, the SDZKP software is a robust, secure, and scalable solution for implementing
+zero-knowledge proofs based on the subgroup distance problem, with a strong emphasis on performance,
+security, and ease of use.</p>
+</section>
+<section id="security-requirements">
+<span id="sec-securityreq"></span><h2><span class="section-number">3.3. </span>Security Requirements<a class="headerlink" href="#security-requirements" title="Link to this heading"></a></h2>
+<p>An interactive proof scheme (IP) is a two-party protocol between a
+prover and a verifier (turing machines) where the prover (P) has infinite
+computational power, while the verifier (V) operates within polynomial
+time. IP should satisfy two conditions, namely completeness and soundness.
+Completeness property means that if the statement is true, the prover can convince the verifier.
+Soundness property means, if the statement is false, a dishonest prover cannot
+mislead the verifier, except with negligable probability <span id="id6">[<a class="reference internal" href="bibliography.html#id149" title="Shafi Goldwasser, Silvio Micali, and Charles Rackoff. The knowledge complexity of interactive proof systems. SIAM Journal on computing, 18(1):186–208, 1989.">GMR89</a>]</span> .
+An essential feature of interactive proofs is the randomness employed by the verifier.
+If verifier sends each random choices (coin tosses) it has done, then IP is called
+public-coin (or Arthur-Merlin game as introduced by Babai    <span id="id7">[<a class="reference internal" href="bibliography.html#id147" title="László Babai. Trading group theory for randomness. In Proceedings of the seventeenth annual ACM symposium on Theory of computing, 421–429. 1985.">Bab85</a>]</span>)  Some IP protocols may require an initial trusted setup phase,
+potentially involving a trusted third party (TTP).</p>
+<p>A zero-knowledge proof (ZKP) is an IP where the verifier learns nothing
+beyond the truth of the statement. If the prover convinces the verifier
+with just one message, the proof is non-interactive. Non-interactive
+ZKPs (NIZKP) can be achieved through a common reference string (CRS) or
+a random oracle model. A common approach to achive a NIZKP is to convert
+an interactive protocol into a non-interactive one using the Fiat–Shamir heuristic.
+The zero-knowledge property is shown by using a probabilistic polynomial-time algorithm
+called simulator. It ensures that the verifier gains no additional information by giving
+outputs indistinguishable from the verifier’s without having a witness. The idea of the simulation paradigm <span id="id8">[<a class="reference internal" href="bibliography.html#id161" title="Goldreich Oded. Foundations of cryptography basic tools. Cambridge University Press, 2001.">Ode01</a>]</span> is
+“whatever a party can do by itself cannot be considered a gain from interaction with the outside.”
+Let us explain zero knowledge property more formally.</p>
+<p>An IP <span class="math notranslate nohighlight">\((P,V)\)</span> is considered to have zero knowledge property if for
+every efficient (PPT) verifier <span class="math notranslate nohighlight">\(V^*\)</span>, there exists an efficient
+simulator <span class="math notranslate nohighlight">\(S_{V^*}\)</span> such that for every true statement <span class="math notranslate nohighlight">\(x,\)</span>
+<span class="math notranslate nohighlight">\(View_{V^*}[ P(x) \leftrightarrow V^*(x)]=S_{V^*}(x)\)</span> where <span class="math notranslate nohighlight">\(View_{V^*}[ P(x) \leftrightarrow V(x)]\)</span> and <span class="math notranslate nohighlight">\(S_{V^*}(x)\)</span> denote all messages
+between <span class="math notranslate nohighlight">\(P\)</span> and <span class="math notranslate nohighlight">\(V^*\)</span> that appears in the real execution of the protocol
+(which is called the view of <span class="math notranslate nohighlight">\(V^*\)</span> on x) and output of <span class="math notranslate nohighlight">\(S_{V^*}\)</span> respectively.
+In the given scenario, the verifier might not adhere to the specified protocol and could
+attempt to cheat. If we limit the scenario to an honest verifier, the protocol is
+referred to as an <strong>honest verifier zero-knowledge proof</strong>.</p>
+<p>In real life, the definition of zero knowledge proof schemes is often relaxed.
+This relaxation can be done in soundness or zero knowledge condition. For both conditions
+these relaxations give rise to three variants of the properties;
+namely, perfect, statistical and computational.</p>
+<p><strong>Perfect soundness</strong> is the original condition that a computationally unbounded cheating prover
+<span class="math notranslate nohighlight">\(P^*\)</span> can not convince <span class="math notranslate nohighlight">\(V\)</span>.
+If this <span class="math notranslate nohighlight">\(P^*\)</span> has negligible probability of cheating the verifier, the protocol is said to have
+<strong>statistical soundness</strong>. It is said to have <strong>computational soundness</strong> if the probability of success of
+cheating prover  <span class="math notranslate nohighlight">\(P^*\)</span> is negligable whenever <span class="math notranslate nohighlight">\(P^*\)</span> is probabilistic polynomial time.
+Zero-knowledge systems with computational soundness are also referred to as arguments,
+a term introduced by Brassard, Chaum, and Crepeau <span id="id9">[<a class="reference internal" href="bibliography.html#id23" title="Gilles Brassard, David Chaum, and Claude Crépeau. Minimum disclosure proofs of knowledge. Journal of computer and system sciences, 37(2):156–189, 1988.">BCCrepeau88</a>]</span>.</p>
+<p>Relaxation in zero knowledge property is done by allowing the simulator
+to sometimes fail. If we keep the original condition that the outputs of the actual protocol and the simulator are
+indistinguishable (i.e., absolutely no information is leaked) then we say
+the protocol has <strong>perfect zero knowledge</strong>  property. <strong>statistical (a.k.a., almost-perfect) zero knowledge</strong>
+permits a negligible amount of information to leak, but this leakage is so minor
+that it remains insignificant,  no matter how much computational power the verifier
+possesses. Although the two distributions differ, their statistical distance is negligible.
+If protocol allows for some information leakage, but only to an extent that is negligible for
+a verifier with limited (probabilistic polynomial-time) computational resources,
+then it is called <strong>computational zero knowledge</strong>.</p>
+<p>Next we give a stronger property then soundness condition:</p>
+<p>(Two) Special Soundness: A three round (commit, challenge, response) protocol
+for a relation <span class="math notranslate nohighlight">\(R\)</span> is said to have special soundness if there
+exists an efficient extractor <span class="math notranslate nohighlight">\(A\)</span> which computes a <span class="math notranslate nohighlight">\(w\)</span>
+satisfying <span class="math notranslate nohighlight">\((x,w)\in R\)</span> for any <span class="math notranslate nohighlight">\(x\)</span> and any pair of
+transcripts <span class="math notranslate nohighlight">\((a,c,z),(a,c',z')\)</span> with <span class="math notranslate nohighlight">\(c\not=c'.\)</span></p>
+<p>This definition is generalized as k-Special Soundness (see <span id="id10">[<a class="reference internal" href="bibliography.html#id5" title="Thomas Attema, Ronald Cramer, and Lisa Kohl. A compressed sigma-protocol theory for lattices. In Proceedings of the Annual International Cryptology Conference, 549–579. Springer, 2021.">ACK21</a>]</span>):
+A three round  public-coin IP for relation <span class="math notranslate nohighlight">\(R\)</span> with challenge space consisting of <span class="math notranslate nohighlight">\(N\)</span> elements
+is said to be <span class="math notranslate nohighlight">\(k\)</span>-Special Sound (out of <span class="math notranslate nohighlight">\(N\)</span>) if there exists a PPT algorithm such that on input
+a statement <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(k\)</span>-many accepting transcripts <span class="math notranslate nohighlight">\((a,c_1,z_1), \dots, (a,c_k,z_k)`\)</span> for the same commitment
+with different challanges, it outputs a witness <span class="math notranslate nohighlight">\(w`\)</span> satisfying <span class="math notranslate nohighlight">\((x,w) \in R.\)</span></p>
+<p>It is known that a <span class="math notranslate nohighlight">\(k-\)</span> Special Sound IP with challenge space with <span class="math notranslate nohighlight">\(N\)</span> elements has
+knowledge soundness with knowledge error <span class="math notranslate nohighlight">\(\frac{k-1}{N}\)</span> <span id="id11">[<a class="reference internal" href="bibliography.html#id5" title="Thomas Attema, Ronald Cramer, and Lisa Kohl. A compressed sigma-protocol theory for lattices. In Proceedings of the Annual International Cryptology Conference, 549–579. Springer, 2021.">ACK21</a>]</span>.</p>
+<p>Special honest verifier zero knowledge property: A three round (commit,
+challenge, response) protocol for a relation <span class="math notranslate nohighlight">\(R\)</span> is said to have
+special honest verifier zero knowledge property if there exists an
+efficient simulator <span class="math notranslate nohighlight">\(S\)</span> which outputs an accepting transcript
+<span class="math notranslate nohighlight">\((a,c,z)\)</span> with distribution just like the real transcript for any
+given any <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(c.\)</span></p>
+<p>All in all, the ZKP implementations can be compared based on the
+following design choices  <span id="id12">[<a class="reference internal" href="bibliography.html#id26" title="D. Benarroch, L. Brandão, M. Maller, and E. Tromer. Zkproof community reference. version 0.3. ZKProof, 2022. URL: https://docs.zkproof.org/reference.">BBMT22</a>]</span>:</p>
+<ol class="arabic simple">
+<li><p>Types of supported statements: a ZKP of knowledge or a ZKP of
+membership.</p></li>
+<li><p>Whether or not a trusted setup is required: When existing ZKP
+protocols are analyzed, the following possibilities for the trusted
+setup phase emerge:</p>
+<ol class="arabic simple">
+<li><p>No setup: In this case, the ZKP scheme does not require any
+trusted setup phase; e.g., a copy of the security parameter is the
+only information required for initializing the ZKP scheme. For
+instance, bulletproof does not require any setup phase.</p></li>
+<li><p>Uniform random string (public coin): If the messages produced by
+the verifier are uniform random strings, and if those messages are
+independent of the prover’s messages, then we say that the setup
+phase employs public coins. All parties have access to an output
+of a uniform random number generator.</p></li>
+<li><p>Common reference string (CRS): When the setup phase employs a
+publicly known information called as CRS known to everybody. This
+is the generalization of the public coins. In CRS, the information
+does not have to be uniform random.</p></li>
+<li><p>Designated verifier setup: When the CSR is known only to a
+designated verifier, the setup phase is called as designated
+verifier setup. In this approach, the setup algorithm executed by
+the prover is correlated with the setup algorithm executed by the
+verifier; and this requires a trust to the setup phase.</p></li>
+<li><p>Random oracle model: The setup phase defines a common
+cryptographically secure hash function that acts as a random
+oracle to produce nonces (numbers used once and never repeated)
+that are never used in the past invocations of the algorithm.</p></li>
+</ol>
+</li>
+<li><p>Interactive or not.</p></li>
+<li><p>Assumptions about the underlying intractable problem: Most of the
+works in the literature using group theoretic approach allocates DLP.</p></li>
+</ol>
+</section>
+<section id="zkp-performance-metrics">
+<h2><span class="section-number">3.4. </span>ZKP Performance Metrics<a class="headerlink" href="#zkp-performance-metrics" title="Link to this heading"></a></h2>
+<p>The efficiency of ZKP implementations can be compared based on the
+following performance metrics  <span id="id13">[<a class="reference internal" href="bibliography.html#id26" title="D. Benarroch, L. Brandão, M. Maller, and E. Tromer. Zkproof community reference. version 0.3. ZKProof, 2022. URL: https://docs.zkproof.org/reference.">BBMT22</a>]</span>. Here, we list the
+most-commonly used metrics.</p>
+<ol class="arabic simple">
+<li><p>Proof size (succinctness): the size of the proof in comparison to the
+circuit size (<span class="math notranslate nohighlight">\(C\)</span>) representing the statement.</p>
+<ol class="arabic simple">
+<li><p>Fully succinct: <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span></p></li>
+<li><p>Polylog succinct: e.g., <span class="math notranslate nohighlight">\(\mathcal{O}(\log^2 C)\)</span></p></li>
+<li><p>Sqare root succinct: <span class="math notranslate nohighlight">\(\mathcal{O}(\sqrt{C})\)</span></p></li>
+<li><p>Depth-succinct: e.g., <span class="math notranslate nohighlight">\(\mathcal{O}(d \log C)\)</span> assuming that
+the depth of the verification circuit is <span class="math notranslate nohighlight">\(d.\)</span></p></li>
+<li><p>Non-succinct: the proof is not sublinear in <span class="math notranslate nohighlight">\(C\)</span>.</p></li>
+</ol>
+</li>
+<li><p>The time complexity for the trusted setup (if exists)</p></li>
+<li><p>The time complexity of the tasks executed by the prover <span class="math notranslate nohighlight">\(P:\)</span>
+efficiency of the proof generation</p></li>
+<li><p>The time complexity of the tasks executed by the verifier <span class="math notranslate nohighlight">\(V\)</span>:
+efficiency of the proof verification</p></li>
+</ol>
+<p>In addition to these metrics, round complexity, parallelizability,
+batching, memory consumption, number of operations in the algorithms,
+memory consumption, disk and storage requirements can be considered as
+additional performance metrics for comparing various ZKP proposals
+<span id="id14">[<a class="reference internal" href="bibliography.html#id26" title="D. Benarroch, L. Brandão, M. Maller, and E. Tromer. Zkproof community reference. version 0.3. ZKProof, 2022. URL: https://docs.zkproof.org/reference.">BBMT22</a>]</span>.</p>
+<p>Zero-Knowledge Succinct Non-Interactive ARgument of Knowledge (zk-SNARK)
+is a non-interactive ZKP protocol initially proposed by Bitansky et
+al. in 2011. They showed that if there exist extractable
+collision-resistant hash functions (ECRHs) and an appropriate private
+information retrieval scheme, then there exist SNARKs for NP. Also in
+this work, they propose candidates for ECRH constructions. One of these
+is based on the hardness of discrete logarithm problem and the two
+others are based on hard problems on lattices namely, knapsack
+(subset-sum) problems. In 2016, Groth constructed an efficient zk-SNARK
+for Quadratic Arithmetic Programs where he used bilinear groups. Zcash
+uses Groth’s construction. A downside of zk-SNARK is it uses non-public
+randomness in its setup phase. In other words, zk-SNARK requires a
+trusted setup. Also, it is not quantum-safe. A remedy to these problem
+is zk-STARK.</p>
+<p>Scalable Transparent Zero-knowledge Argument of Knowledge (zk-STARK)
+introduced by Ben-Sasson et al. in 2018. It is an Interactive Oracle
+Proofs (IOP) system. zk-STARK is more transparent, i.e., it needs no
+trusted set-up. zk-STARKS rely on collision-resistant hash functions.
+The zk-STARK-friendly hash function  <span id="id15">[<a class="reference internal" href="bibliography.html#id167" title="Eli Ben-Sasson, Lior Goldberg, and David Levit. Stark friendly hash–survey and recommendation. Cryptology ePrint Archive, 2020.">BSGL20</a>]</span> <span id="id16">[<a class="reference internal" href="bibliography.html#id168" title="Anne Canteaut, Tim Beyne, Itai Dinur, Maria Eichlseder, Gregor Leander, Gaëtan Leurent, María Naya-Plasencia, Léo Perrin, Yu Sasaki, Yosuke Todo, and others. Report on the security of stark-friendly hash functions (version 2.0). HAL Id: hal-02883253, 2020.">CBD+20</a>]</span>
+is the focus of extensive research campaign. Relying on hash functions,
+it is quantum resistant. A major disadvantage of zk-STARKS is the proof
+size compared to zk-SNARKS. There are some recent works that try to
+reduce the proof length.</p>
+<p>Zk-SNARK’s algorithmic complexity for prover
+<span class="math notranslate nohighlight">\(\mathcal{O}(C\log(C))\)</span> and verifier <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span> are
+lower compared to zk-STARK’s complexity that is
+<span class="math notranslate nohighlight">\(\mathcal{O}(C \text{polylog}(C))\)</span> and
+<span class="math notranslate nohighlight">\(\mathcal{O}(\text{polylog}(C))\)</span>, respectively. The proof size of
+zk-SNARK is <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span> whereas it is
+<span class="math notranslate nohighlight">\(\mathcal{O}(\text{polylog}(C))\)</span> for zk-STARK.</p>
+<p>Aurora  <span id="id17">[<a class="reference internal" href="bibliography.html#id28" title="Eli Ben-Sasson, Alessandro Chiesa, Michael Riabzev, Nicholas Spooner, Madars Virza, and Nicholas P Ward. Aurora: transparent succinct arguments for r1cs. In Advances in Cryptology–EUROCRYPT 2019: 38th Annual International Conference on the Theory and Applications of Cryptographic Techniques, Darmstadt, Germany, May 19–23, 2019, Proceedings, Part I 38, 103–128. Springer, 2019.">BSCR+19</a>]</span> is a Zk-SNARK proposed by Ben-Sasson et al. in
+2019. They developed the protocol for Rank-1 Constraint Satisfaction
+(R1CS) which is an NP-complete language. Aurora employs a public
+(transparent) setup phase. It is lightweight and quantum-safe. For the
+same number of constraints defined in R1CS, they accomplished reducing
+the proof size to 20 times shorter than the previous Zk-SNARK proposals.
+Aurora uses an interactive oracle proof for solving univariate version
+of the sumcheck problem  <span id="id18">[<a class="reference internal" href="bibliography.html#id156" title="Carsten Lund, Lance Fortnow, Howard Karloff, and Noam Nisan. Algebraic methods for interactive proof systems. Journal of the ACM (JACM), 39(4):859–868, 1992.">LFKN92</a>]</span>.</p>
+<p>Hyrax  <span id="id19">[<a class="reference internal" href="bibliography.html#id30" title="Riad S Wahby, Ioanna Tzialla, Abhi Shelat, Justin Thaler, and Michael Walfish. Doubly-efficient zksnarks without trusted setup. In 2018 IEEE Symposium on Security and Privacy (SP), 926–943. IEEE, 2018.">WTS+18</a>]</span> is another Zk-SNARK variant proposed by Wahby
+et al. in 2017. They convert an interactive proof of arithmetic circuit
+(AC) satisfiability to a ZKP scheme. Hyrax’s proofs are sublinear in
+circuit size (succinct), does not require a trusted setup phase, secure
+under the discrete log assumption.</p>
+<p>Ligero is a zero knowledge argument based on a chosen
+collision-resistant hash function. By making it non-interactive in the
+random oracle model, an efficient zk-SNARKs can be obtained that do not
+require a trusted setup or public-key encryption.</p>
+<p>Bulletproof is a short zero-knowledge proof depending on the hardness of
+discrete logarithm problem and has no trusted setup. It uses Pedersen
+vector commitment and has very short the proof size by groundbreaking
+method inner product algorithm. It can be non-interactive using
+Fiat-Shamir heuristic. One disadvantage of Bulletproof is, it takes more
+time to verify a bulletproof than to verify a SNARK proof.</p>
+<p>Libra  <span id="id20">[<a class="reference internal" href="bibliography.html#id27" title="Tiancheng Xie, Jiaheng Zhang, Yupeng Zhang, Charalampos Papamanthou, and Dawn Song. Libra: succinct zero-knowledge proofs with optimal prover computation. Cryptology ePrint Archive, Paper 2019/317, 2019. URL: https://eprint.iacr.org/2019/317.">XZZ+19</a>]</span> is zero-knowledge proof scheme that has
+both optimal prover time with a succinct proof size and
+<span class="math notranslate nohighlight">\(\mathcal{O}(d \log C)\)</span> verification time. Different from the
+other proposals, Libra employs a one-time setup phase that does not have
+to be repeated per statement. It relies on the GKR protocol
+<span id="id21">[<a class="reference internal" href="bibliography.html#id155" title="Shafi Goldwasser, Yael Tauman Kalai, and Guy N Rothblum. Delegating computation: interactive proofs for muggles. Journal of the ACM, 62(4):1–64, 2015.">GKR15</a>]</span>.</p>
+</section>
+<section id="adversary-model-and-threat-analysis">
+<h2><span class="section-number">3.5. </span>Adversary Model and Threat Analysis<a class="headerlink" href="#adversary-model-and-threat-analysis" title="Link to this heading"></a></h2>
+<p>An adversary is a (malicious) attacker carrying out an attack on the
+protocol and an adversary model is the formal definition of the attacker
+in a security protocol. Depending on the level of formalization, it may
+be a set of statements about the capabilities (skill sets, advantages,
+assumptions, and also limitations) of the attacker and its goal. An
+adversary model can be an algorithm having some computation power.
+Adversary models are generally used to prove the security of the
+protocol. A widely used model is the Dolev-Yao model
+<span id="id22">[<a class="reference internal" href="bibliography.html#id108" title="Danny Dolev and Andrew Yao. On the security of public key protocols. IEEE Transactions on information theory, 29(2):198–208, 1983.">DY83</a>]</span>. In the Dolev–Yao model, the adversary can listen
+to communication between the principals and can send data/messages to
+principals. It may act as a man in the middle.</p>
+<p>An adversary model usually defines</p>
+<ol class="arabic simple">
+<li><p>the assumptions about the attacker</p>
+<ol class="arabic simple">
+<li><p>assumptions about the environment: whether the adversary is an
+insider or outsider. Connectivity of the adversary to the protocol
+infrastructure can also be evaluated here.</p></li>
+<li><p>intellectual resources: the intellectual resources of the
+adversary based on competence and knowledgeability.</p></li>
+<li><p>capabilities: the privileges of the adversary and whether or not
+it is active</p></li>
+<li><p>computational resources; e.g., number of CPUs, memory, etc.</p></li>
+<li><p>amount of accessible data</p></li>
+</ol>
+</li>
+<li><p>the goal(s) of the adversary.</p></li>
+</ol>
+<p>While designing a zero knowledge protocol, the main security concerns
+are whether or not completeness, soundness and zero knowledge properties
+are satisfied. However, when zero-knowledge proofs are employed in
+applications such as identification or authentication, additional
+attacks can be implemented by an adversary. Below we briefly define the
+attack vectors and the associated adversary models are presented in
+<a class="reference internal" href="#tab-attacks"><span class="std std-numref">Table 3.1</span></a>  <span id="id23">[<a class="reference internal" href="bibliography.html#id150" title="Will Major, William J Buchanan, and Jawad Ahmad. An authentication protocol based on chaos and zero knowledge proof. Nonlinear Dynamics, 99:3065–3087, 2020.">MBA20</a>]</span> <span id="id24">[<a class="reference internal" href="bibliography.html#id151" title="Marcus Walshe, Gregory Epiphaniou, Haider Al-Khateeb, Mohammad Hammoudeh, Vasilios Katos, and Ali Dehghantanha. Non-interactive zero knowledge proofs for the authentication of iot devices in reduced connectivity environments. Ad Hoc Networks, 95:101988, 2019.">WEAK+19</a>]</span>
+<span id="id25">[<a class="reference internal" href="bibliography.html#id152" title="Lorenzo Grassi, Dmitry Khovratovich, Christian Rechberger, Arnab Roy, and Markus Schofnegger. Poseidon: a new hash function for zero-knowledge proof systems. In USENIX Security Symposium, volume 2021. 2021.">GKR+21</a>]</span> <span id="id26">[<a class="reference internal" href="bibliography.html#id153" title="Adwait Pathak, Tejas Patil, Shubham Pawar, Piyush Raut, and Smita Khairnar. Secure authentication using zero knowledge proof. In 2021 Asian Conference on Innovation in Technology (ASIANCON), 1–8. IEEE, 2021.">PPP+21</a>]</span> <span id="id27">[<a class="reference internal" href="bibliography.html#id157" title="Cynthia Dwork, Moni Naor, and Amit Sahai. Concurrent zero-knowledge. J. ACM, 51(6):851–898, nov 2004. doi:10.1145/1039488.1039489.">DNS04</a>]</span> <span id="id28">[<a class="reference internal" href="bibliography.html#id154" title="Mubarak Umar, Zhenqiang Wu, and Xuening Liao. Channel characteristics aware zero knowledge proof based authentication scheme in body area networks. Ad Hoc Networks, 112:102374, 2021. doi:https://doi.org/10.1016/j.adhoc.2020.102374.">UWL21</a>]</span>.</p>
+<ol class="arabic simple">
+<li><p>Impersonation attacks (masquerading as prover)</p></li>
+<li><p>Mutual impersonation: person-in-the-middle attack</p></li>
+<li><p>Replay attacks</p>
+<ol class="arabic simple">
+<li><p>General replay attacks (resending previously captured messages)</p></li>
+<li><p>Interleaving attack (a selective combination of information from
+previous protocol executions is used to attack the protocol)</p></li>
+<li><p>Reflection attack (some messages are replayed back to the sender)</p></li>
+<li><p>Delay attack (some messages are delayed by an active adversary)</p></li>
+</ol>
+</li>
+<li><p>Integrity attack (some messages are intelligently modified by an
+active adversary)</p></li>
+<li><p>Brute force attack (all possible combinations to solve the
+intractable problem are tried)</p></li>
+<li><p>Quantum attack (whether or not the protocol is quantum-safe?)</p></li>
+<li><p>Redundancy information attack (a passive adversary listens to all
+messages on the channel and tries to derive useful information)</p></li>
+<li><p>Timing attack (a passive adversary has access to system clocks and can measure how much time it takes for algorithms to run.) <span id="id29">[<a class="reference internal" href="bibliography.html#id157" title="Cynthia Dwork, Moni Naor, and Amit Sahai. Concurrent zero-knowledge. J. ACM, 51(6):851–898, nov 2004. doi:10.1145/1039488.1039489.">DNS04</a>]</span></p></li>
+</ol>
+<span id="tab-attacks"></span><table class="docutils align-default" id="id31">
+<caption><span class="caption-number">Table 3.1 </span><span class="caption-text">Potential attacks and the adversary model.</span><a class="headerlink" href="#id31" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attack</p></th>
+<th class="head"><p>Goal(s)</p></th>
+<th class="head"><p>Location</p></th>
+<th class="head"><p><strong>P/A</strong></p></th>
+<th class="head"><p>Resources</p></th>
+<th class="head"><p><strong>A
+ccessible
+data</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Im
+personate
+as prover</p></td>
+<td><p>Break
+s
+oundness,
+cheat
+verifier</p></td>
+<td><p>Insider
+outsider</p></td>
+<td><p>Active</p></td>
+<td><p>Bounded</p></td>
+<td><p>Some
+:mat
+h:<cite>(x,w)</cite>
+pairs</p></td>
+</tr>
+<tr class="row-odd"><td><p>Mutual
+impe
+rsonation
+(person
+in the
+middle)</p></td>
+<td><p>Break
+com
+pleteness
+and
+soundness</p></td>
+<td><p>Insider
+outsider</p></td>
+<td><p>Active</p></td>
+<td><p>Bounded</p></td>
+<td><p>Public
+data</p></td>
+</tr>
+<tr class="row-even"><td><p>Replay
+attacks
+(inte
+rleaving,
+re
+flection,
+delay)</p></td>
+<td></td>
+<td><p>Insider
+outsider</p></td>
+<td><p>Active</p></td>
+<td><p>Bounded</p></td>
+<td><p>Public
+data</p></td>
+</tr>
+<tr class="row-odd"><td><p>Integrity
+attack</p></td>
+<td><p>Modify
+messages
+to break
+soundness</p></td>
+<td><p>Insider</p></td>
+<td><p>Active</p></td>
+<td><p>Bounded</p></td>
+<td><p>Public
+data and
+p
+reviously
+captured
+messages</p></td>
+</tr>
+<tr class="row-even"><td><p>Brtute
+force
+attack</p></td>
+<td><p>Break
+zero-
+knowledge</p></td>
+<td><p>Outsider</p></td>
+<td><p>P
+assive</p></td>
+<td><p>Bounded
+Unbounded</p></td>
+<td><p>Public
+data</p></td>
+</tr>
+<tr class="row-odd"><td><p>Quantum
+attacks</p></td>
+<td><p>Break
+zero-
+knowledge</p></td>
+<td><p>Outsider</p></td>
+<td><p>P
+assive</p></td>
+<td><p>Quantum
+computer</p></td>
+<td><p>Messages
+on
+channel</p></td>
+</tr>
+<tr class="row-even"><td><p>R
+edundancy
+in
+formation
+attack</p></td>
+<td><p>Break
+zero-
+knowledge
+by
+eave
+sdropping
+messages
+or by
+analyzing
+public
+data</p></td>
+<td><p>Outsider</p></td>
+<td><p>P
+assive</p></td>
+<td><p>Unbounded</p></td>
+<td><p>Messages
+on
+channel</p></td>
+</tr>
+<tr class="row-odd"><td><p>Timing
+attacks</p></td>
+<td><p>Reveal
+secret
+in
+formation</p></td>
+<td><p>Insider</p></td>
+<td><p>P
+assive</p></td>
+<td><p>Bounded</p></td>
+<td><p>System
+clocks</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="sdzkp.html" class="btn btn-neutral float-left" title="1. Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="analysis.html" class="btn btn-neutral float-right" title="4. Performance and Security Analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Cansu Betin Onur.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
