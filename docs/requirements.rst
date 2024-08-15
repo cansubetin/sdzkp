@@ -118,6 +118,52 @@ shown in :numref:`fig-zkparch`. The details of the design decisions regarding th
 of the protocol can be found in :cite:p:`onur2024zeroknowledgeproofknowledgesubgroup`.
 
 
+Software Top-level Design
+=========================
+
+The SDZKP software system is a comprehensive Python implementation designed to facilitate a zero-knowledge proof (ZKP) 
+protocol based on the subgroup distance problem within the Hamming metric. This software enables a secure, 
+privacy-preserving communication mechanism between a Prover and a Verifier, which is essential in cryptographic 
+applications where confidentiality and integrity are paramount. The system's core functionality revolves 
+around a 3-round ZKP protocol, where the Prover generates a proof based on the input parameters related 
+to the subgroup distance problem, and the Verifier validates this proof without revealing any underlying 
+information. This ensures that the process adheres to the principles of statistical zero-knowledge, 
+meaning that no information about the Prover's input (the witness) is leaked during the verification process. 
+The soundness error of the protocol is deliberately set at 2/3, aligning with the theoretical underpinnings 
+of zero-knowledge proofs in cryptographic research.
+
+The architecture of the SDZKP system is divided into three primary modules: the Prover, the Verifier, and 
+the gRPC Communication module. The Prover module is responsible for handling input parameters, generating 
+the proof, and sending this proof to the Verifier via a secure gRPC interface. The Verifier module, 
+on the other hand, receives the proof and performs a rigorous verification process to ensure the 
+proof's validity, again utilizing gRPC for secure communication. The gRPC Communication module plays 
+a crucial role in maintaining the integrity and confidentiality of the data exchanged between the 
+Prover and Verifier, ensuring that all transmissions are encrypted and secure.
+
+In terms of non-functional requirements, the SDZKP system is designed with performance, scalability, 
+and security in mind. The proof generation and verification processes are optimized for efficiency, 
+minimizing latency in communication to ensure a smooth user experience. The system is also scalable, 
+capable of handling larger instances of the subgroup distance problem without significant degradation 
+in performance. Security is a fundamental aspect of the system, with rigorous measures in place 
+to uphold the zero-knowledge property, ensuring that the process remains secure and that no 
+unintended information is leaked.
+
+The SDZKP project is built using Python, and all dependencies are managed via a `requirements.txt` file, 
+ensuring easy setup and installation. The system is compatible with major operating systems that 
+support Python, including Linux, macOS, and Windows. The project also includes comprehensive testing 
+requirements, with unit tests developed for key functions within the Prover and Verifier components, 
+as well as integration tests to ensure that the communication between these components is correctly 
+implemented and secure. Additionally, security tests are performed to validate that the system 
+adheres to the zero-knowledge principles.
+
+Maintenance of the SDZKP system is facilitated through GitHub's issue tracking feature, which allows 
+for efficient management of bugs, feature requests, and other project-related tasks. Continuous 
+integration and deployment (CI/CD) pipelines are also implemented, automating the testing and 
+deployment processes to ensure that the system remains up-to-date and functional as new updates 
+are made. Overall, the SDZKP software is a robust, secure, and scalable solution for implementing 
+zero-knowledge proofs based on the subgroup distance problem, with a strong emphasis on performance, 
+security, and ease of use.
+
 .. _`sec:securityreq`:
 
 Security Requirements
